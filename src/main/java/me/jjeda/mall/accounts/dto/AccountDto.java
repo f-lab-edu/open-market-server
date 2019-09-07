@@ -38,7 +38,7 @@ public class AccountDto {
                 .address(this.address)
                 .phone(this.phone)
                 .accountRole(this.accountRole)
-                .createdDate(LocalDateTime.now())
+                .createdAt(LocalDateTime.now())
                 .build();
     }
 }

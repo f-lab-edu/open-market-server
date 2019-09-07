@@ -5,7 +5,12 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.EnumType;
+import javax.persistence.Embedded;
 import java.time.LocalDateTime;
 
 @Entity
@@ -36,8 +41,8 @@ public class Account {
     @Embedded
     private Address address;
 
-    private LocalDateTime createdDate;
+    private LocalDateTime createdAt;
 
-    private LocalDateTime modifiedDate;
+    private LocalDateTime modifiedAt;
 
 }

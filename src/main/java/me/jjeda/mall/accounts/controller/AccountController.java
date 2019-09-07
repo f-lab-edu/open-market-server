@@ -16,10 +16,10 @@ import java.net.URI;
 
 @RestController
 @AllArgsConstructor
-@RequestMapping(value = "/api/accounts", produces = MediaTypes.HAL_JSON_UTF8_VALUE)
+@RequestMapping("/api/accounts")
 public class AccountController {
 
-    AccountService accountService;
+    private AccountService accountService;
 
     @PostMapping
     public ResponseEntity createAccount(@RequestBody AccountDto requestAccount) {
