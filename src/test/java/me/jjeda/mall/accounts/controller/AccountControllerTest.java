@@ -1,6 +1,7 @@
 package me.jjeda.mall.accounts.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import me.jjeda.mall.accounts.domain.Account;
 import me.jjeda.mall.accounts.domain.AccountRole;
 import me.jjeda.mall.accounts.domain.Address;
 import me.jjeda.mall.accounts.dto.AccountDto;
@@ -15,7 +16,9 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import java.util.stream.IntStream;
+
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -50,13 +53,13 @@ public class AccountControllerTest {
 
         // when & then
         mockMvc.perform(post("/api/accounts")
-                    .contentType(MediaType.APPLICATION_JSON_UTF8)
-                    .content(objectMapper.writeValueAsString(dto)))
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .content(objectMapper.writeValueAsString(dto)))
                 .andDo(print())
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("id").exists())
                 .andExpect(jsonPath("userName").value("jjeda"));
-//                .andExpect(jsonPath("password").doesNotExist());
+
     }
 
     @Test
@@ -66,15 +69,51 @@ public class AccountControllerTest {
     }
 
     @Test
-    @TestDescription("30명의 유저에서 10명씩 2번째 페이지 조회하기")
-    public void queryAccount() {
+    @TestDescription("100명의 유저에서 20명씩 3번째 페이지 조회하기")
+    public void queryAccount() throws Exception {
+        // given
+        IntStream.range(0, 100).forEach(this::generateAccount);
+
+        // when & then
+        this.mockMvc.perform(get("/api/accounts")
+                    .param("page","2")
+                    .param("size","20")
+                    .param("sort","id,DESC"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("page").exists())
+                .andExpect(jsonPath("_embedded.accountList[0]").exists());
+
+    }
+
+    private Account generateAccount(int index) {
+        AccountDto accountDto = AccountDto.builder()
+                    .accountRole(AccountRole.USER)
+                    .address(new Address("", "", ""))
+                    .email("jjeda" + index + "@naver.com")
+                    .userName("jjeda" + index)
+                    .phone("01012341234")
+                    .password("pass")
+                .build();
+        return accountRepository.save(accountDto.toEntity());
 
     }
 
     @Test
     @TestDescription("정상적으로 유저 한명을 조회하는 테스트")
-    public void getAccount() {
+    public void getAccount() throws Exception {
+        //given
+        Account account = generateAccount(1);
 
+        // when & then
+        this.mockMvc.perform(get("/api/accounts/{id}",account.getId()))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("id").exists())
+                .andExpect(jsonPath("email").exists())
+                .andExpect(jsonPath("userName").exists())
+                .andExpect(jsonPath("phone").exists())
+                .andExpect(jsonPath("address").exists());
     }
 
     @Test
@@ -91,8 +130,19 @@ public class AccountControllerTest {
 
     @Test
     @TestDescription("정상적으로 계정정보를 삭제하는 테스트")
-    public void deleteAccount() {
+    public void deleteAccount() throws Exception {
+        //given
+        Account account = generateAccount(1);
 
+        // when & then
+        this.mockMvc.perform(delete("/api/accounts/{id}",account.getId()))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("id").doesNotExist())
+                .andExpect(jsonPath("email").doesNotExist())
+                .andExpect(jsonPath("userName").doesNotExist())
+                .andExpect(jsonPath("phone").doesNotExist())
+                .andExpect(jsonPath("address").doesNotExist());
     }
 
 }
