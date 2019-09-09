@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.ColumnDefault;
+import me.jjeda.mall.accounts.dto.AccountDto;
 
 import javax.persistence.Entity;
 import javax.persistence.Enumerated;
@@ -50,5 +50,15 @@ public class Account {
 
     public void setDeleteFlag() {
         this.isDeleted = true;
+    }
+
+    public void update(AccountDto accountDto) {
+        this.userName = accountDto.getUserName();
+        this.address = accountDto.getAddress();
+        this.password = accountDto.getPassword();
+        this.accountRole = accountDto.getAccountRole();
+        this.phone = accountDto.getPhone();
+        this.email = accountDto.getEmail();
+        this.modifiedAt = LocalDateTime.now();
     }
 }

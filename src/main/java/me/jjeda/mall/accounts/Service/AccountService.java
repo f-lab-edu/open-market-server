@@ -9,10 +9,12 @@ import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.PagedResources;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.Optional;
 
 @Service
 @AllArgsConstructor
+@Transactional
 public class AccountService {
 
     AccountRepository accountRepository;
@@ -39,12 +41,17 @@ public class AccountService {
     public void deleteAccount(Long id) {
         Account account = accountRepository.findById(id).get();
         account.setDeleteFlag();
-        accountRepository.save(account);
     }
 
     public void deleteAccountByAdmin(Long id) {
         Account account = accountRepository.findById(id).get();
         account.setDeleteFlag();
-        accountRepository.save(account);
+    }
+
+    public Account updateAccount(Long id, AccountDto accountDto) {
+        Account account = accountRepository.findById(id).get();
+        account.update(accountDto);
+
+        return account;
     }
 }

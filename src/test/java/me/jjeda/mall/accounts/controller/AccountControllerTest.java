@@ -49,7 +49,6 @@ public class AccountControllerTest {
                 .accountRole(AccountRole.USER)
                 .address(new Address("seoul", "anju", "1234"))
                 .build();
-        accountRepository.save(dto.toEntity());
 
         // when & then
         mockMvc.perform(post("/api/accounts")
@@ -90,7 +89,7 @@ public class AccountControllerTest {
     private Account generateAccount(int index) {
         AccountDto accountDto = AccountDto.builder()
                     .accountRole(AccountRole.USER)
-                    .address(new Address("", "", ""))
+                    .address(new Address("a", "b", "c"))
                     .email("jjeda" + index + "@naver.com")
                     .userName("jjeda" + index)
                     .phone("01012341234")
@@ -126,7 +125,28 @@ public class AccountControllerTest {
 
     @Test
     @TestDescription("정상적으로 개인정보를 변경하는 테스트")
-    public void modifyAccount() {
+    public void modifyAccount() throws Exception {
+        //given
+        Account account = generateAccount(1);
+
+        AccountDto dto = AccountDto.builder()
+                .email("update@naver.com")
+                .password("update")
+                .userName("update")
+                .phone("010-4321-4321")
+                .accountRole(AccountRole.USER)
+                .address(new Address("seoul", "update", "1234"))
+                .build();
+
+        // when & then
+        mockMvc.perform(put("/api/accounts/{id}",account.getId())
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .content(objectMapper.writeValueAsString(dto)))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("id").exists())
+                .andExpect(jsonPath("userName").value("update"));
+
 
     }
 
@@ -136,11 +156,12 @@ public class AccountControllerTest {
         //given
         Account account = generateAccount(1);
 
-        // when & then
+        // when
         this.mockMvc.perform(delete("/api/accounts/{id}",account.getId()))
                 .andDo(print())
                 .andExpect(status().isOk());
 
+        // then
         this.mockMvc.perform(get("/api/accounts/{id}",account.getId()))
                 .andDo(print())
                 .andExpect(status().isOk())
