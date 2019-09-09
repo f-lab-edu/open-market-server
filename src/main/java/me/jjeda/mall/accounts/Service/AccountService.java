@@ -22,16 +22,29 @@ public class AccountService {
         return accountRepository.save(dto.toEntity());
     }
 
-    public PagedResources findAllAccount(Pageable pageable, PagedResourcesAssembler<Account> pagedResourcesAssembler) {
+    public PagedResources findAllAccountWithValidation(Boolean isDeleted,Pageable pageable, PagedResourcesAssembler<Account> pagedResourcesAssembler) {
 
-        return pagedResourcesAssembler.toResource(accountRepository.findAll(pageable));
+        return pagedResourcesAssembler.toResource(accountRepository.findAccountsByIsDeleted(isDeleted, pageable));
+
     }
 
     public Optional<Account> getAccount(Long id) {
         return accountRepository.findById(id);
     }
 
+    public Optional<Account> getAccountByAdmin(Long id) {
+        return accountRepository.findById(id);
+    }
+
     public void deleteAccount(Long id) {
-        accountRepository.deleteById(id);
+        Account account = accountRepository.findById(id).get();
+        account.setDeleteFlag();
+        accountRepository.save(account);
+    }
+
+    public void deleteAccountByAdmin(Long id) {
+        Account account = accountRepository.findById(id).get();
+        account.setDeleteFlag();
+        accountRepository.save(account);
     }
 }

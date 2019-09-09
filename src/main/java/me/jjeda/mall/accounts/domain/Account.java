@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.ColumnDefault;
 
 import javax.persistence.Entity;
 import javax.persistence.Enumerated;
@@ -32,6 +33,8 @@ public class Account {
 
     private String phone;
 
+    private Boolean isDeleted;
+
     @Enumerated(EnumType.STRING)
     private AccountRole accountRole;
 
@@ -45,4 +48,7 @@ public class Account {
 
     private LocalDateTime modifiedAt;
 
+    public void setDeleteFlag() {
+        this.isDeleted = true;
+    }
 }

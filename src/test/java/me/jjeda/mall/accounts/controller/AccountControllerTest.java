@@ -69,16 +69,17 @@ public class AccountControllerTest {
     }
 
     @Test
-    @TestDescription("100명의 유저에서 20명씩 3번째 페이지 조회하기")
+    @TestDescription("유효한 100명의 유저에서 20명씩 3번째 페이지 조회하기")
     public void queryAccount() throws Exception {
         // given
         IntStream.range(0, 100).forEach(this::generateAccount);
 
         // when & then
-        this.mockMvc.perform(get("/api/accounts")
+        this.mockMvc.perform(get("/api/accounts/admin")
                     .param("page","2")
                     .param("size","20")
-                    .param("sort","id,DESC"))
+                    .param("sort","id,DESC")
+                    .param("isDeleted","false"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("page").exists())
@@ -113,7 +114,8 @@ public class AccountControllerTest {
                 .andExpect(jsonPath("email").exists())
                 .andExpect(jsonPath("userName").exists())
                 .andExpect(jsonPath("phone").exists())
-                .andExpect(jsonPath("address").exists());
+                .andExpect(jsonPath("address").exists())
+                .andExpect(jsonPath("isDeleted").value("false"));
     }
 
     @Test
@@ -137,12 +139,18 @@ public class AccountControllerTest {
         // when & then
         this.mockMvc.perform(delete("/api/accounts/{id}",account.getId()))
                 .andDo(print())
+                .andExpect(status().isOk());
+
+        this.mockMvc.perform(get("/api/accounts/{id}",account.getId()))
+                .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("id").doesNotExist())
-                .andExpect(jsonPath("email").doesNotExist())
-                .andExpect(jsonPath("userName").doesNotExist())
-                .andExpect(jsonPath("phone").doesNotExist())
-                .andExpect(jsonPath("address").doesNotExist());
+                .andExpect(jsonPath("id").exists())
+                .andExpect(jsonPath("email").exists())
+                .andExpect(jsonPath("userName").exists())
+                .andExpect(jsonPath("phone").exists())
+                .andExpect(jsonPath("address").exists())
+                .andExpect(jsonPath("isDeleted").value("true"));
+
     }
 
 }

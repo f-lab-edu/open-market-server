@@ -39,6 +39,7 @@ public class AccountDto {
                 .phone(this.phone)
                 .accountRole(this.accountRole)
                 .createdAt(LocalDateTime.now())
+                .isDeleted(Boolean.FALSE)
                 .build();
     }
 }
