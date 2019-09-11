@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 @Builder
 public class AccountDto {
 
-    private String userName;
+    private String nickname;
     /**
      * email, password, phone, Role, address 등은 개인정보로 직렬화하여 메시지에 담지 않는다.
      */
@@ -32,7 +32,7 @@ public class AccountDto {
 
     public Account toEntity() {
         return Account.builder()
-                .userName(this.userName)
+                .nickname(this.nickname)
                 .email(this.email)
                 .password(this.password)
                 .address(this.address)

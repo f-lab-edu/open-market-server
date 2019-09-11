@@ -3,6 +3,7 @@ package me.jjeda.mall.accounts.domain;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.NoArgsConstructor;
 import me.jjeda.mall.accounts.dto.AccountDto;
 
@@ -15,7 +16,7 @@ import javax.persistence.Embedded;
 import java.time.LocalDateTime;
 
 @Entity
-@Getter
+@Getter @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -25,7 +26,7 @@ public class Account {
     @GeneratedValue
     private Long id;
 
-    private String userName;
+    private String nickname;
 
     private String email;
 
@@ -53,7 +54,7 @@ public class Account {
     }
 
     public void update(AccountDto accountDto) {
-        this.userName = accountDto.getUserName();
+        this.nickname = accountDto.getUserName();
         this.address = accountDto.getAddress();
         this.password = accountDto.getPassword();
         this.accountRole = accountDto.getAccountRole();

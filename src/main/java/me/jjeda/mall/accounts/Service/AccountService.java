@@ -7,6 +7,10 @@ import me.jjeda.mall.accounts.repository.AccountRepository;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.PagedResources;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -15,13 +19,17 @@ import java.util.Optional;
 @Service
 @AllArgsConstructor
 @Transactional
-public class AccountService {
+public class AccountService implements UserDetailsService {
 
-    AccountRepository accountRepository;
+    private AccountRepository accountRepository;
+
+    private PasswordEncoder passwordEncoder;
 
     public Account saveAccount(AccountDto dto) {
-        //TODO : passwordEncoder로 비밀번호 hashing처리
-        return accountRepository.save(dto.toEntity());
+        Account account = dto.toEntity();
+        account.setPassword(passwordEncoder.encode(dto.getPassword()));
+
+        return accountRepository.save(account);
     }
 
     public PagedResources findAllAccountWithValidation(Boolean isDeleted,Pageable pageable, PagedResourcesAssembler<Account> pagedResourcesAssembler) {
@@ -53,5 +61,14 @@ public class AccountService {
         account.update(accountDto);
 
         return account;
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        Account account = accountRepository.findByEmail(username)
+                .orElseThrow(() -> new UsernameNotFoundException(username));
+
+        //TODO : account 객체를 UserDetails에 맞게 리턴 -> USER 클래스를 사용할까?
+        return null;
     }
 }
