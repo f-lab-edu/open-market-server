@@ -16,9 +16,13 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.Set;
 import java.util.stream.IntStream;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -46,7 +50,7 @@ public class AccountControllerTest {
                 .password("pass")
                 .nickname("jjeda")
                 .phone("010-1234-1234")
-                .accountRole(AccountRole.USER)
+                .accountRole(Set.of(AccountRole.USER))
                 .address(new Address("seoul", "anju", "1234"))
                 .build();
 
@@ -88,7 +92,7 @@ public class AccountControllerTest {
 
     private Account generateAccount(int index) {
         AccountDto accountDto = AccountDto.builder()
-                    .accountRole(AccountRole.USER)
+                    .accountRole(Set.of(AccountRole.USER))
                     .address(new Address("a", "b", "c"))
                     .email("jjeda" + index + "@naver.com")
                     .nickname("jjeda" + index)
@@ -134,7 +138,7 @@ public class AccountControllerTest {
                 .password("update")
                 .nickname("update")
                 .phone("010-4321-4321")
-                .accountRole(AccountRole.USER)
+                .accountRole(Set.of(AccountRole.USER))
                 .address(new Address("seoul", "update", "1234"))
                 .build();
 

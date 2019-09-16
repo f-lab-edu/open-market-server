@@ -7,13 +7,16 @@ import lombok.Setter;
 import lombok.NoArgsConstructor;
 import me.jjeda.mall.accounts.dto.AccountDto;
 
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
-import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.FetchType;
+import javax.persistence.Enumerated;
 import javax.persistence.EnumType;
 import javax.persistence.Embedded;
 import java.time.LocalDateTime;
+import java.util.Set;
 
 @Entity
 @Getter @Setter
@@ -36,8 +39,9 @@ public class Account {
 
     private Boolean isDeleted;
 
+    @ElementCollection(fetch = FetchType.EAGER)
     @Enumerated(EnumType.STRING)
-    private AccountRole accountRole;
+    private Set<AccountRole> accountRole;
 
     /**
      * 회원(구매측)뿐만아니라 회사(판매측) 등 재사용성을 위해 값타입으로 매핑
@@ -54,7 +58,7 @@ public class Account {
     }
 
     public void update(AccountDto accountDto) {
-        this.nickname = accountDto.getUserName();
+        this.nickname = accountDto.getNickname();
         this.address = accountDto.getAddress();
         this.password = accountDto.getPassword();
         this.accountRole = accountDto.getAccountRole();

@@ -9,6 +9,7 @@ import me.jjeda.mall.accounts.domain.AccountRole;
 import me.jjeda.mall.accounts.domain.Address;
 
 import java.time.LocalDateTime;
+import java.util.Set;
 
 //@JsonIgnoreProperties({"email", "password", "phone", "address", "accountRole"})
 @AllArgsConstructor
@@ -26,7 +27,7 @@ public class AccountDto {
 
     private String phone;
 
-    private AccountRole accountRole;
+    private Set<AccountRole> accountRole;
 
     private Address address;
 
