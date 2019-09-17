@@ -1,5 +1,6 @@
 package me.jjeda.mall.accounts.configs;
 
+import me.jjeda.mall.accounts.domain.AccountRole;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -23,8 +24,13 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
             .anonymous()
                 .and()
             .authorizeRequests()
+                .mvcMatchers(HttpMethod.POST,"/api/accounts")
+                    .anonymous()
+                .mvcMatchers("/api/accounts/**")
+                    .authenticated()
                 .mvcMatchers(HttpMethod.GET, "/api/**")
                     .permitAll()
+                .mvcMatchers("/admin/**").hasRole("ADMIN")
                 .anyRequest()
                     .authenticated()
                 .and()

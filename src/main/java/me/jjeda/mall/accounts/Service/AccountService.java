@@ -16,6 +16,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.Collection;
 import java.util.Optional;
 import java.util.Set;
@@ -54,16 +55,19 @@ public class AccountService implements UserDetailsService {
         return accountRepository.findById(id);
     }
 
+    @Transactional
     public void deleteAccount(Long id) {
         Account account = accountRepository.findById(id).get();
         account.setDeleteFlag();
     }
 
+    @Transactional
     public void deleteAccountByAdmin(Long id) {
         Account account = accountRepository.findById(id).get();
         account.setDeleteFlag();
     }
 
+    @Transactional
     public Account updateAccount(Long id, AccountDto accountDto) {
         Account account = accountRepository.findById(id).get();
         account.update(accountDto);

@@ -1,17 +1,13 @@
 package me.jjeda.mall.accounts.controller;
 
-import lombok.AllArgsConstructor;
 import me.jjeda.mall.accounts.Service.AccountService;
 import me.jjeda.mall.accounts.domain.Account;
 import me.jjeda.mall.accounts.dto.AccountDto;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PagedResourcesAssembler;
-import org.springframework.hateoas.PagedResources;
 import org.springframework.hateoas.mvc.ControllerLinkBuilder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-
+import javax.validation.Valid;
 import java.net.URI;
 import java.util.Optional;
 
@@ -26,55 +22,39 @@ public class AccountController {
     }
 
     @PostMapping
-    public ResponseEntity createAccount(@RequestBody AccountDto requestAccount) {
+    public ResponseEntity createAccount(@RequestBody @Valid AccountDto requestAccount) {
         Account account = accountService.saveAccount(requestAccount);
         URI uri = ControllerLinkBuilder.linkTo(AccountController.class).slash(account.getId()).toUri();
 
         return ResponseEntity.created(uri).body(account);
     }
 
-    /**
-     * 유효 or 유효하지 않은 Account 조회하는 method
-     * @param isDeleted : Account 가 삭제됐을 때 true 값을 갖는 flag
-     */
-    @GetMapping("/admin")
-    public ResponseEntity getAllAccountWithValidation(@RequestParam Boolean isDeleted, Pageable pageable, PagedResourcesAssembler<Account> pagedResourcesAssembler) {
-        PagedResources pagedResources = accountService.findAllAccountWithValidation(isDeleted, pageable, pagedResourcesAssembler);
-
-        return ResponseEntity.ok(pagedResources);
-    }
+    //TODO : 현재 로그인 된 사용자 정보를 불러와 조회, 삭제, 수정 하려는 유저가 아니라면 401 Message 를 리턴하게 하는 로직 추가
 
     @GetMapping("/{id}")
     public ResponseEntity getAccount(@PathVariable Long id) {
         Optional<Account> account = accountService.getAccount(id);
-
-        return ResponseEntity.ok(account);
-    }
-
-    @GetMapping("/admin/{id}")
-    public ResponseEntity getAccountByAdmin(@PathVariable Long id) {
-        Optional<Account> account = accountService.getAccountByAdmin(id);
+        if (account.isEmpty()) return ResponseEntity.notFound().build();
 
         return ResponseEntity.ok(account);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity deleteAccount(@PathVariable Long id) {
+        Optional<Account> account = accountService.getAccount(id);
+        if (account.isEmpty()) return ResponseEntity.notFound().build();
+
         accountService.deleteAccount(id);
 
         return ResponseEntity.ok().build();
     }
 
-    @DeleteMapping("/admin/{id}")
-    public ResponseEntity deleteAccountByAdmin(@PathVariable Long id) {
-        accountService.deleteAccountByAdmin(id);
-
-        return ResponseEntity.ok().build();
-    }
-
     @PutMapping("/{id}")
-    public ResponseEntity updateAccount(@PathVariable Long id, @RequestBody AccountDto accountDto) {
-        Account account = accountService.updateAccount(id,accountDto);
+    public ResponseEntity updateAccount(@PathVariable Long id, @RequestBody @Valid AccountDto accountDto) {
+        Optional<Account> optionalAccount = accountService.getAccount(id);
+        if (optionalAccount.isEmpty()) return ResponseEntity.notFound().build();
+
+        Account account = accountService.updateAccount(id, accountDto);
 
         return ResponseEntity.ok(account);
     }
