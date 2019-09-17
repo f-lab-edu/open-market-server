@@ -1,7 +1,6 @@
 package me.jjeda.mall.accounts.configs;
 
 import me.jjeda.mall.accounts.Service.AccountService;
-import me.jjeda.mall.accounts.domain.Account;
 import me.jjeda.mall.accounts.domain.AccountRole;
 import me.jjeda.mall.accounts.domain.Address;
 import me.jjeda.mall.accounts.dto.AccountDto;
@@ -32,7 +31,7 @@ public class AuthServerConfigTest {
     protected MockMvc mockMvc;
 
     @Autowired
-    AccountService accountService;
+    private AccountService accountService;
 
 
     @Test

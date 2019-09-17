@@ -18,12 +18,17 @@ import org.springframework.security.oauth2.provider.token.store.redis.RedisToken
 
 @Configuration
 @EnableWebSecurity
-@AllArgsConstructor
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private AccountService accountService;
 
     private PasswordEncoder passwordEncoder;
+
+    public SecurityConfig(AccountService accountService, PasswordEncoder passwordEncoder) {
+        this.accountService = accountService;
+        this.passwordEncoder = passwordEncoder;
+    }
+
 
     /**
      * TokenStore -> Redis

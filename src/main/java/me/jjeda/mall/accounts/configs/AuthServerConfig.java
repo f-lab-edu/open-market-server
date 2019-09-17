@@ -1,6 +1,5 @@
 package me.jjeda.mall.accounts.configs;
 
-import lombok.AllArgsConstructor;
 import me.jjeda.mall.accounts.Service.AccountService;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -14,7 +13,6 @@ import org.springframework.security.oauth2.provider.token.TokenStore;
 
 @Configuration
 @EnableAuthorizationServer
-@AllArgsConstructor
 public class AuthServerConfig extends AuthorizationServerConfigurerAdapter {
 
     private PasswordEncoder passwordEncoder;
@@ -25,6 +23,12 @@ public class AuthServerConfig extends AuthorizationServerConfigurerAdapter {
 
     private TokenStore tokenStore;
 
+    public AuthServerConfig(PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager, AccountService accountService, TokenStore tokenStore) {
+        this.passwordEncoder = passwordEncoder;
+        this.authenticationManager = authenticationManager;
+        this.accountService = accountService;
+        this.tokenStore = tokenStore;
+    }
 
     // 보안정보 설정
     @Override

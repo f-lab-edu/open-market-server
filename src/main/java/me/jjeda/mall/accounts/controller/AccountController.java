@@ -16,11 +16,14 @@ import java.net.URI;
 import java.util.Optional;
 
 @RestController
-@AllArgsConstructor
 @RequestMapping("/api/accounts")
 public class AccountController {
 
     private AccountService accountService;
+
+    public AccountController(AccountService accountService) {
+        this.accountService = accountService;
+    }
 
     @PostMapping
     public ResponseEntity createAccount(@RequestBody AccountDto requestAccount) {
