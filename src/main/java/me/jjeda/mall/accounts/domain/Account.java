@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.NoArgsConstructor;
+import me.jjeda.mall.accounts.Service.AccountService;
 import me.jjeda.mall.accounts.dto.AccountDto;
 
 import javax.persistence.ElementCollection;
@@ -37,7 +38,8 @@ public class Account {
 
     private String phone;
 
-    private Boolean isDeleted;
+    @Enumerated(EnumType.STRING)
+    private AccountStatus status;
 
     @ElementCollection(fetch = FetchType.EAGER)
     @Enumerated(EnumType.STRING)
@@ -52,10 +54,6 @@ public class Account {
     private LocalDateTime createdAt;
 
     private LocalDateTime modifiedAt;
-
-    public void setDeleteFlag() {
-        this.isDeleted = true;
-    }
 
     public void update(AccountDto accountDto) {
         this.nickname = accountDto.getNickname();

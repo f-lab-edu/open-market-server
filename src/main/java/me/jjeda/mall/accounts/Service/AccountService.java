@@ -2,6 +2,7 @@ package me.jjeda.mall.accounts.Service;
 
 import me.jjeda.mall.accounts.domain.Account;
 import me.jjeda.mall.accounts.domain.AccountRole;
+import me.jjeda.mall.accounts.domain.AccountStatus;
 import me.jjeda.mall.accounts.dto.AccountDto;
 import me.jjeda.mall.accounts.repository.AccountRepository;
 import org.springframework.data.domain.Pageable;
@@ -15,8 +16,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.transaction.Transactional;
 import java.util.Collection;
 import java.util.Optional;
 import java.util.Set;
@@ -41,30 +42,23 @@ public class AccountService implements UserDetailsService {
         return accountRepository.save(account);
     }
 
-    public PagedResources findAllAccountWithValidation(Boolean isDeleted, Pageable pageable, PagedResourcesAssembler<Account> pagedResourcesAssembler) {
+    public PagedResources findAllAccountWithStatus(AccountStatus status, Pageable pageable, PagedResourcesAssembler<Account> pagedResourcesAssembler) {
 
-        return pagedResourcesAssembler.toResource(accountRepository.findAccountsByIsDeleted(isDeleted, pageable));
+        return pagedResourcesAssembler.toResource(accountRepository.findAccountsByStatus(status, pageable));
 
     }
 
     public Optional<Account> getAccount(Long id) {
         return accountRepository.findById(id);
     }
-
-    public Optional<Account> getAccountByAdmin(Long id) {
-        return accountRepository.findById(id);
+    public Optional<Account> getAccount(String email) {
+        return accountRepository.findByEmail(email);
     }
 
     @Transactional
-    public void deleteAccount(Long id) {
+    public void changeAccountStatus(Long id, AccountStatus status) {
         Account account = accountRepository.findById(id).get();
-        account.setDeleteFlag();
-    }
-
-    @Transactional
-    public void deleteAccountByAdmin(Long id) {
-        Account account = accountRepository.findById(id).get();
-        account.setDeleteFlag();
+        account.setStatus(status);
     }
 
     @Transactional
