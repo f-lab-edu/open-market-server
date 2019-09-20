@@ -5,6 +5,7 @@ import me.jjeda.mall.accounts.domain.Account;
 import me.jjeda.mall.accounts.domain.AccountStatus;
 import me.jjeda.mall.accounts.dto.AccountAdapter;
 import me.jjeda.mall.accounts.dto.AccountDto;
+import me.jjeda.mall.common.CurrentUser;
 import org.springframework.hateoas.mvc.ControllerLinkBuilder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -40,26 +41,21 @@ public class AccountController {
     }
 
     @GetMapping
-    public ResponseEntity getAccount(@AuthenticationPrincipal AccountAdapter accountAdapter) {
-        Account account = accountAdapter.getAccount();
-
+    public ResponseEntity getAccount(@CurrentUser Account account) {
         return ResponseEntity.ok(account);
     }
 
     @DeleteMapping
-    public ResponseEntity deleteAccount(@AuthenticationPrincipal AccountAdapter accountAdapter) {
-        Account account = accountAdapter.getAccount();
+    public ResponseEntity deleteAccount(@CurrentUser Account account) {
         accountService.changeAccountStatus(account.getId(), AccountStatus.DELETED);
 
         return ResponseEntity.ok().build();
     }
 
     @PutMapping
-    public ResponseEntity updateAccount(@RequestBody @Valid AccountDto accountDto, @AuthenticationPrincipal AccountAdapter accountAdapter) {
-        Account account = accountAdapter.getAccount();
+    public ResponseEntity updateAccount(@RequestBody @Valid AccountDto accountDto, @CurrentUser Account account) {
+        Account newAccount = accountService.updateAccount(account.getId(), accountDto);
 
-        account = accountService.updateAccount(account.getId(), accountDto);
-
-        return ResponseEntity.ok(account);
+        return ResponseEntity.ok(newAccount);
     }
 }
