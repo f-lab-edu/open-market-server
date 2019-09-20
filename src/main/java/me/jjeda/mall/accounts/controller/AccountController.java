@@ -3,6 +3,7 @@ package me.jjeda.mall.accounts.controller;
 import me.jjeda.mall.accounts.Service.AccountService;
 import me.jjeda.mall.accounts.domain.Account;
 import me.jjeda.mall.accounts.domain.AccountStatus;
+import me.jjeda.mall.accounts.dto.AccountAdapter;
 import me.jjeda.mall.accounts.dto.AccountDto;
 import org.springframework.hateoas.mvc.ControllerLinkBuilder;
 import org.springframework.http.ResponseEntity;
@@ -39,35 +40,25 @@ public class AccountController {
     }
 
     @GetMapping
-    public ResponseEntity getAccount(@AuthenticationPrincipal User currentUser) {
-        Optional<Account> account = accountService.getAccount(currentUser.getUsername());
-        if (account.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
+    public ResponseEntity getAccount(@AuthenticationPrincipal AccountAdapter accountAdapter) {
+        Account account = accountAdapter.getAccount();
 
         return ResponseEntity.ok(account);
     }
 
     @DeleteMapping
-    public ResponseEntity deleteAccount(@AuthenticationPrincipal User currentUser) {
-        Optional<Account> account = accountService.getAccount(currentUser.getUsername());
-        if (account.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
-
-        accountService.changeAccountStatus(account.get().getId(), AccountStatus.DELETED);
+    public ResponseEntity deleteAccount(@AuthenticationPrincipal AccountAdapter accountAdapter) {
+        Account account = accountAdapter.getAccount();
+        accountService.changeAccountStatus(account.getId(), AccountStatus.DELETED);
 
         return ResponseEntity.ok().build();
     }
 
     @PutMapping
-    public ResponseEntity updateAccount(@RequestBody @Valid AccountDto accountDto, @AuthenticationPrincipal User currentUser) {
-        Optional<Account> optionalAccount = accountService.getAccount(currentUser.getUsername());
-        if (optionalAccount.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
+    public ResponseEntity updateAccount(@RequestBody @Valid AccountDto accountDto, @AuthenticationPrincipal AccountAdapter accountAdapter) {
+        Account account = accountAdapter.getAccount();
 
-        Account account = accountService.updateAccount(optionalAccount.get().getId(), accountDto);
+        account = accountService.updateAccount(account.getId(), accountDto);
 
         return ResponseEntity.ok(account);
     }

@@ -3,6 +3,7 @@ package me.jjeda.mall.accounts.Service;
 import me.jjeda.mall.accounts.domain.Account;
 import me.jjeda.mall.accounts.domain.AccountRole;
 import me.jjeda.mall.accounts.domain.AccountStatus;
+import me.jjeda.mall.accounts.dto.AccountAdapter;
 import me.jjeda.mall.accounts.dto.AccountDto;
 import me.jjeda.mall.accounts.repository.AccountRepository;
 import org.springframework.data.domain.Pageable;
@@ -51,9 +52,6 @@ public class AccountService implements UserDetailsService {
     public Optional<Account> getAccount(Long id) {
         return accountRepository.findById(id);
     }
-    public Optional<Account> getAccount(String email) {
-        return accountRepository.findByEmail(email);
-    }
 
     @Transactional
     public void changeAccountStatus(Long id, AccountStatus status) {
@@ -74,12 +72,7 @@ public class AccountService implements UserDetailsService {
         Account account = accountRepository.findByEmail(username)
                 .orElseThrow(() -> new UsernameNotFoundException(username));
 
-        return new User(account.getEmail(), account.getPassword(), authorities(account.getAccountRole()));
+        return new AccountAdapter(account);
     }
 
-    private Collection<? extends GrantedAuthority> authorities(Set<AccountRole> roles) {
-        return roles.stream()
-                .map(r -> new SimpleGrantedAuthority("ROLE_" + r.name()))
-                .collect(Collectors.toSet());
-    }
 }
