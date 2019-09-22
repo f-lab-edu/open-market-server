@@ -1,7 +1,5 @@
-package me.jjeda.mall.accounts.dto;
+package me.jjeda.mall.accounts.domain;
 
-import me.jjeda.mall.accounts.domain.Account;
-import me.jjeda.mall.accounts.domain.AccountRole;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
@@ -14,9 +12,13 @@ public class AccountAdapter extends User {
 
     private Account account;
 
-    public AccountAdapter(Account account) {
+    private AccountAdapter(Account account) {
         super(account.getEmail(), account.getPassword(), authorities(account.getAccountRole()));
         this.account = account;
+    }
+
+    public static AccountAdapter from(Account account) {
+        return new AccountAdapter(account);
     }
 
     private static Collection<? extends GrantedAuthority> authorities(Set<AccountRole> roles) {
