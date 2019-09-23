@@ -1,32 +1,44 @@
 package me.jjeda.mall.accounts.Service;
 
-import lombok.AllArgsConstructor;
 import me.jjeda.mall.accounts.domain.Account;
+import me.jjeda.mall.accounts.domain.AccountAdapter;
+import me.jjeda.mall.accounts.domain.AccountStatus;
 import me.jjeda.mall.accounts.dto.AccountDto;
 import me.jjeda.mall.accounts.repository.AccountRepository;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.PagedResources;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.transaction.Transactional;
 import java.util.Optional;
 
 @Service
-@AllArgsConstructor
-@Transactional
-public class AccountService {
+public class AccountService implements UserDetailsService {
 
-    AccountRepository accountRepository;
+    private AccountRepository accountRepository;
 
-    public Account saveAccount(AccountDto dto) {
-        //TODO : passwordEncoder로 비밀번호 hashing처리
-        return accountRepository.save(dto.toEntity());
+    private PasswordEncoder passwordEncoder;
+
+    public AccountService(AccountRepository accountRepository, PasswordEncoder passwordEncoder) {
+        this.accountRepository = accountRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
-    public PagedResources findAllAccountWithValidation(Boolean isDeleted,Pageable pageable, PagedResourcesAssembler<Account> pagedResourcesAssembler) {
+    public Account saveAccount(AccountDto dto) {
+        Account account = dto.toEntity();
+        account.setPassword(passwordEncoder.encode(dto.getPassword()));
 
-        return pagedResourcesAssembler.toResource(accountRepository.findAccountsByIsDeleted(isDeleted, pageable));
+        return accountRepository.save(account);
+    }
+
+    public PagedResources findAllAccountWithStatus(AccountStatus status, Pageable pageable, PagedResourcesAssembler<Account> pagedResourcesAssembler) {
+
+        return pagedResourcesAssembler.toResource(accountRepository.findAccountsByStatus(status, pageable));
 
     }
 
@@ -34,24 +46,26 @@ public class AccountService {
         return accountRepository.findById(id);
     }
 
-    public Optional<Account> getAccountByAdmin(Long id) {
-        return accountRepository.findById(id);
-    }
-
-    public void deleteAccount(Long id) {
+    @Transactional
+    public void changeAccountStatus(Long id, AccountStatus status) {
         Account account = accountRepository.findById(id).get();
-        account.setDeleteFlag();
+        account.setStatus(status);
     }
 
-    public void deleteAccountByAdmin(Long id) {
-        Account account = accountRepository.findById(id).get();
-        account.setDeleteFlag();
-    }
-
+    @Transactional
     public Account updateAccount(Long id, AccountDto accountDto) {
         Account account = accountRepository.findById(id).get();
         account.update(accountDto);
 
         return account;
     }
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        Account account = accountRepository.findByEmail(username)
+                .orElseThrow(() -> new UsernameNotFoundException(username));
+
+        return AccountAdapter.from(account);
+    }
+
 }
