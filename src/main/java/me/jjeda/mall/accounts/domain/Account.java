@@ -3,18 +3,18 @@ package me.jjeda.mall.accounts.domain;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.Setter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import me.jjeda.mall.accounts.dto.AccountDto;
 
 import javax.persistence.ElementCollection;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.FetchType;
-import javax.persistence.Enumerated;
-import javax.persistence.EnumType;
-import javax.persistence.Embedded;
 import java.time.LocalDateTime;
 import java.util.Set;
 
@@ -37,7 +37,8 @@ public class Account {
 
     private String phone;
 
-    private Boolean isDeleted;
+    @Enumerated(EnumType.STRING)
+    private AccountStatus status;
 
     @ElementCollection(fetch = FetchType.EAGER)
     @Enumerated(EnumType.STRING)
@@ -52,10 +53,6 @@ public class Account {
     private LocalDateTime createdAt;
 
     private LocalDateTime modifiedAt;
-
-    public void setDeleteFlag() {
-        this.isDeleted = true;
-    }
 
     public void update(AccountDto accountDto) {
         this.nickname = accountDto.getNickname();

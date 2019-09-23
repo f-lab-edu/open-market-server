@@ -1,6 +1,5 @@
 package me.jjeda.mall.accounts.configs;
 
-import lombok.AllArgsConstructor;
 import me.jjeda.mall.accounts.Service.AccountService;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;

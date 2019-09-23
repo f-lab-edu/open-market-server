@@ -6,7 +6,7 @@ import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Configuration
-public class AppConfig {
+public class PasswordEncoderConfig {
 
     /**
      * password : 평문 Hashing 처리를 위한 메서드
