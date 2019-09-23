@@ -3,13 +3,10 @@ package me.jjeda.mall.accounts.controller;
 import me.jjeda.mall.accounts.Service.AccountService;
 import me.jjeda.mall.accounts.domain.Account;
 import me.jjeda.mall.accounts.domain.AccountStatus;
-import me.jjeda.mall.accounts.dto.AccountAdapter;
 import me.jjeda.mall.accounts.dto.AccountDto;
 import me.jjeda.mall.common.CurrentUser;
 import org.springframework.hateoas.mvc.ControllerLinkBuilder;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -20,7 +17,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 import java.net.URI;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/accounts")
@@ -46,7 +42,7 @@ public class AccountController {
     }
 
     @DeleteMapping
-    public ResponseEntity deleteAccount(@CurrentUser Account account) {
+    public ResponseEntity withdrawFromMembership(@CurrentUser Account account) {
         accountService.changeAccountStatus(account.getId(), AccountStatus.DELETED);
 
         return ResponseEntity.ok().build();
@@ -54,8 +50,8 @@ public class AccountController {
 
     @PutMapping
     public ResponseEntity updateAccount(@RequestBody @Valid AccountDto accountDto, @CurrentUser Account account) {
-        Account newAccount = accountService.updateAccount(account.getId(), accountDto);
+        Account updateAccount = accountService.updateAccount(account.getId(), accountDto);
 
-        return ResponseEntity.ok(newAccount);
+        return ResponseEntity.ok(updateAccount);
     }
 }

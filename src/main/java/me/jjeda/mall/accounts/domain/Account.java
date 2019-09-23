@@ -3,19 +3,18 @@ package me.jjeda.mall.accounts.domain;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.Setter;
 import lombok.NoArgsConstructor;
-import me.jjeda.mall.accounts.Service.AccountService;
+import lombok.Setter;
 import me.jjeda.mall.accounts.dto.AccountDto;
 
 import javax.persistence.ElementCollection;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.FetchType;
-import javax.persistence.Enumerated;
-import javax.persistence.EnumType;
-import javax.persistence.Embedded;
 import java.time.LocalDateTime;
 import java.util.Set;
 
