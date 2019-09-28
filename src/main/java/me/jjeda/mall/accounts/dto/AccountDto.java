@@ -6,7 +6,7 @@ import lombok.Getter;
 import me.jjeda.mall.accounts.domain.Account;
 import me.jjeda.mall.accounts.domain.AccountRole;
 import me.jjeda.mall.accounts.domain.AccountStatus;
-import me.jjeda.mall.accounts.domain.Address;
+import me.jjeda.mall.common.Address;
 
 import javax.persistence.Column;
 import javax.validation.constraints.Email;
