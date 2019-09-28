@@ -35,7 +35,7 @@
 
 
 ## UML Diagram
-![](../static/UML.jpg)
+![](UML.jpg)
 
 ## USECASE [(Prototype)](https://ovenapp.io/view/LAt0douDc5vAO0jdQXuMH9VnFPB9Kmmn/OxtPf)
 - 고객
