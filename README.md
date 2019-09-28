@@ -33,7 +33,11 @@
 - 비밀번호와 같이 중요한 개인정보가 Response Message 에 포함되어 주고받는 문제
 - TODO
 
-### USECASE [(Prototype)](https://ovenapp.io/view/LAt0douDc5vAO0jdQXuMH9VnFPB9Kmmn/OxtPf)
+
+## UML Diagram
+![](../static/UML.jpg)
+
+## USECASE [(Prototype)](https://ovenapp.io/view/LAt0douDc5vAO0jdQXuMH9VnFPB9Kmmn/OxtPf)
 - 고객
   - 고객은 상품조회 및 상품구매를 위해 회원가입, 회원수정, 회원탈퇴를 할 수 있다.
   - 고객은 어떤 상품을 구매할지 보기 위해 (랭킹, 가격, 등록) 등의 옵션으로 상품목록를 카테고리별로 볼 수 있다.
