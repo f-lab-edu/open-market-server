@@ -4,7 +4,7 @@ import me.jjeda.mall.accounts.Service.AccountService;
 import me.jjeda.mall.accounts.common.BaseControllerTest;
 import me.jjeda.mall.accounts.domain.Account;
 import me.jjeda.mall.accounts.domain.AccountRole;
-import me.jjeda.mall.common.Address;
+import me.jjeda.mall.common.model.Address;
 import me.jjeda.mall.accounts.dto.AccountDto;
 import me.jjeda.mall.accounts.repository.AccountRepository;
 import me.jjeda.mall.common.TestDescription;

@@ -1,4 +1,4 @@
-package me.jjeda.mall.common;
+package me.jjeda.mall.common.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

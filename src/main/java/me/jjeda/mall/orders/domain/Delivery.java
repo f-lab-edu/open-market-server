@@ -2,7 +2,7 @@ package me.jjeda.mall.orders.domain;
 
 import lombok.Getter;
 import lombok.Setter;
-import me.jjeda.mall.common.Address;
+import me.jjeda.mall.common.model.Address;
 
 import javax.persistence.Column;
 import javax.persistence.Embedded;
