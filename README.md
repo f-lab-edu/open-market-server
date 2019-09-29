@@ -1,6 +1,8 @@
 ## Open Market Project
-- Commerce 가 제공하는 기능들을 직접 구현함으로써 Commerce 도메인을 이해하자
-- 대규모 트래픽에도 견고한 어플리케이션을 구현하자 
+- Commerce 가 제공하는 기능들을 직접 구현함으로써 Commerce 도메인을 이해
+- 대규모 트래픽에도 견고한 어플리케이션을 구현
+- 논리적이고 이해하기 쉬운 코드
+- 유지보수성이 좋은 객체지향적 설계
 
 
 ## 기능
@@ -22,12 +24,12 @@
 
  
 ## 기술적인 문제 해결 과정
-#### 회원 데이터에 대한 접근 분리 (회원/관리자)
-- 회원 정보를 같은 컨트롤러에서 처리 시 회원이 엔드포인트에 접근하는 경우 발생
-- 복잡해지는 인가 로직 -> 컨트롤러 분리
-- 회원은 회원 id(PK)값으로 접근하는 것이 아닌 Session 에서 현재 사용자를 불러와 접근
-- Adapter 패턴을 이용하여 Account 객체를 스프링 시큐리티가 알고있는 UserDetails로 구현
-- User(UserDetails 구현체)를 통해 DB에서 Account를 불러오는 과정을 생략 할 수있음 -> DB에 대한 부하를 줄일 수 있었다 
+#### 개인회원의 엔드포인트 접근문제 -> `Account` is not able UserDetails 
+- Situation : 일반 사용자가 `Account` 의 `id` 값으로 엔드포인트에 접근 -> Session 에서 현재 사용자 정보 불러오기
+- Task : Session 의 사용자 정보 `User(is able UserDetails)` 를 `Account` (is not able UserDetails) 변환
+- `Account` 가 `UserDetails` 를 구현하면 OCP 에 어긋나고 `User` 의 정보를 통해 `Account` 를 불러오면 불필요한 DB 쿼리가 날아가게 되는데..
+- Action : `User` 를 상속받고 `Account` 를 필드로 하는 `AccountAdapter` 로 연결 (어댑터 패턴) 
+- Result : 객체지향 설계 원칙을 지키며 DB의 부하를 줄일 수 있었다. 
 - 관련 포스팅 : [@AuthenticationPrincipal - 현재 사용자 조회하기](https://jjeda.tistory.com/7) 
 #### 개인정보 보호
 - 비밀번호와 같이 중요한 개인정보가 Response Message 에 포함되어 주고받는 문제
@@ -36,18 +38,3 @@
 
 ## UML Diagram
 ![](UML.jpg)
-
-## USECASE [(Prototype)](https://ovenapp.io/view/LAt0douDc5vAO0jdQXuMH9VnFPB9Kmmn/OxtPf)
-- 고객
-  - 고객은 상품조회 및 상품구매를 위해 회원가입, 회원수정, 회원탈퇴를 할 수 있다.
-  - 고객은 어떤 상품을 구매할지 보기 위해 (랭킹, 가격, 등록) 등의 옵션으로 상품목록를 카테고리별로 볼 수 있다.
-  - 고객은 카테고리별로 브랜드 비교를 위해 브랜드 목록을 볼 수 있다.
-    - 신발 카테고리 : 나이키, 반스, 아디다스  
-  - 고객은 원하는 특정 물건을 구매하기 위해 검색을 통해 물건을 판매하는 판매자의 목록을 불러올 수 있다.
-  - 고객은 최종 구매 전 상품비교 등을 목적으로 장바구니를 통해 원하는 상품을 구매 전에 확인 할 수 있다.
-- 판매자
-  - 판매자는 상품 판매를 위해 물건을 등록, 수정, 삭제 할 수 있다.
-  - 판매자는 상품 판매를 촉구하기 위해 물건에 대한 광고 및 이벤트를 진행 할 수 있다.
-- 관리자
-  - 관리자는 회원관리를 위해 고객/판매자의 상태를 관리 할 수있다.
-    - BAN, NORMAL
