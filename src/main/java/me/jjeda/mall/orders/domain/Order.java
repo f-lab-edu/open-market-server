@@ -1,5 +1,6 @@
 package me.jjeda.mall.orders.domain;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import me.jjeda.mall.accounts.domain.Account;
@@ -42,11 +43,19 @@ public class Order {
     private Delivery delivery;
 
     @OneToMany(mappedBy = "order")
-    @NotNull
     private List<OrderItem> orderItems;
 
     private LocalDateTime orderAt;
 
     @Enumerated(EnumType.STRING)
     private OrderStatus status;
+
+    @Builder
+    public Order(Account account, Delivery delivery, LocalDateTime orderAt, OrderStatus status) {
+        this.account = account;
+        this.delivery = delivery;
+        this.orderAt = orderAt;
+        this.status = status;
+        this.orderItems = new ArrayList<>();
+    }
 }

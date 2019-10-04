@@ -25,5 +25,4 @@ public class ItemCategory {
     @ManyToOne
     @JoinColumn(name = "category_id")
     private Category category;
-
 }

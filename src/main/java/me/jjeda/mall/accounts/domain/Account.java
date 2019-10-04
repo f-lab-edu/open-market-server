@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import me.jjeda.mall.accounts.dto.AccountDto;
 import me.jjeda.mall.common.model.Address;
+import me.jjeda.mall.items.domain.Item;
 
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
@@ -17,7 +18,10 @@ import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -39,6 +43,12 @@ public class Account {
     private String password;
 
     private String phone;
+
+    /**
+     * SELLER 의 경우 팔고있는 상품
+     */
+    @OneToMany(mappedBy = "account")
+    private List<Item> items = new ArrayList<>();
 
     @Enumerated(EnumType.STRING)
     private AccountStatus status;
