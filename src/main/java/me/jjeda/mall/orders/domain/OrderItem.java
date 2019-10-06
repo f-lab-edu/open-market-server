@@ -1,6 +1,8 @@
 package me.jjeda.mall.orders.domain;
 
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import me.jjeda.mall.items.domain.Item;
 
@@ -13,6 +15,7 @@ import javax.persistence.ManyToOne;
 
 @Entity
 @Getter @Setter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class OrderItem {
 
     @Id @GeneratedValue
@@ -29,5 +32,5 @@ public class OrderItem {
 
     private int orderPrice;
 
-    private int count;
+    private int quantity;
 }

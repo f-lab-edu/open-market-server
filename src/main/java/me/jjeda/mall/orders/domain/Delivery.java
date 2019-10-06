@@ -1,6 +1,8 @@
 package me.jjeda.mall.orders.domain;
 
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import me.jjeda.mall.common.model.Address;
 
@@ -15,6 +17,7 @@ import javax.persistence.OneToOne;
 
 @Entity
 @Getter @Setter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Delivery {
 
     @Id

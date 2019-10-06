@@ -1,7 +1,9 @@
 package me.jjeda.mall.orders.domain;
 
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import me.jjeda.mall.accounts.domain.Account;
 
@@ -17,14 +19,14 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 @Getter @Setter
 @Table(name = "orders", indexes = {@Index(columnList = "orderAt")} )
+@Builder
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Order {
 
     @Id @GeneratedValue
@@ -50,12 +52,4 @@ public class Order {
     @Enumerated(EnumType.STRING)
     private OrderStatus status;
 
-    @Builder
-    public Order(Account account, Delivery delivery, LocalDateTime orderAt, OrderStatus status) {
-        this.account = account;
-        this.delivery = delivery;
-        this.orderAt = orderAt;
-        this.status = status;
-        this.orderItems = new ArrayList<>();
-    }
 }

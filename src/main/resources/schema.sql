@@ -56,7 +56,7 @@ create table account_account_role (
 
  create table order_item (
     order_item_id bigint not null,
-    count integer not null,
+    quantity integer not null,
     order_price integer not null,
     item_id bigint,
     order_id bigint,

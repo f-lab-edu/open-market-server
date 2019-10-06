@@ -1,6 +1,8 @@
 package me.jjeda.mall.items.domain;
 
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.Column;
@@ -12,6 +14,7 @@ import javax.persistence.ManyToOne;
 
 @Entity
 @Getter @Setter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ItemCategory {
 
     @Id @GeneratedValue
