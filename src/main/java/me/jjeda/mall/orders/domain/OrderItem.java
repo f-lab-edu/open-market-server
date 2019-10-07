@@ -1,6 +1,7 @@
 package me.jjeda.mall.orders.domain;
 
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -16,6 +17,7 @@ import javax.persistence.ManyToOne;
 @Entity
 @Getter @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Builder
 public class OrderItem {
 
     @Id @GeneratedValue
