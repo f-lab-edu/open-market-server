@@ -8,6 +8,7 @@ import lombok.Setter;
 import me.jjeda.mall.accounts.dto.AccountDto;
 import me.jjeda.mall.common.model.Address;
 import me.jjeda.mall.items.domain.Item;
+import me.jjeda.mall.orders.domain.Order;
 
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
@@ -48,7 +49,7 @@ public class Account {
      * SELLER 의 경우 팔고있는 상품
      */
     @OneToMany(mappedBy = "account")
-    private List<Item> items = new ArrayList<>();
+    private List<Order> orders = new ArrayList<>();
 
     @Enumerated(EnumType.STRING)
     private AccountStatus status;
