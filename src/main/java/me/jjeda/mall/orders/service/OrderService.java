@@ -25,11 +25,11 @@ public class OrderService {
 
     @Transactional
     public Order createOrder(OrderDto orderDto, Account account) {
-        Order order = orderDto.from();
+        Order order = orderDto.to();
 
         // 연관관계 메서드
         order.setAccount(account);
-        account.getOrders().add(order);
+        account.insertOrder(order);
         order.getDelivery().setOrder(order);
         List<OrderItem> orderItems = order.getOrderItems();
         for (OrderItem orderItem : orderItems) {
@@ -45,7 +45,6 @@ public class OrderService {
         return orderRepository.save(order);
     }
 
-    @Transactional(readOnly = true)
     public Order getOrder(Long orderId) {
         return orderRepository.findById(orderId).orElseThrow(EntityNotFoundException::new);
     }
@@ -57,26 +56,16 @@ public class OrderService {
     }
 
 
-    /* 배송상태는 준비 -> 배송중 -> 배송완료 단방향이므로 status 를 파라미터로하여 상태를 변경하는 메서드가아니라
-     * 준비 -> 배송중  / 배송중 -> 완료 메서드로 분리
-     */
     @Transactional
-    public Order startDelivery(Long orderId) {
+    public Order changeDeliveryStatus(Long orderId, DeliveryStatus deliveryStatus) {
         Order order = orderRepository.findById(orderId).orElseThrow(EntityNotFoundException::new);
 
         //TODO [#25] : 결제로직이 완성되면 결제상태를 체크하기
-        order.getDelivery().setStatus(DeliveryStatus.DELIVERY);
+        order.getDelivery().setStatus(deliveryStatus);
 
         return order;
     }
 
-    @Transactional
-    public Order finishDelivery(Long orderId) {
-        Order order = orderRepository.findById(orderId).orElseThrow(EntityNotFoundException::new);
-        order.getDelivery().setStatus(DeliveryStatus.COMP);
-
-        return order;
-    }
 
     @Transactional
     public Order cancelOrder(Long orderId) {

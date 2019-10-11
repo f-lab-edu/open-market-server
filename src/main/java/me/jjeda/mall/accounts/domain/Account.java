@@ -77,4 +77,8 @@ public class Account {
         this.email = accountDto.getEmail();
         this.modifiedAt = LocalDateTime.now();
     }
+
+    public void insertOrder(Order order) {
+        this.orders.add(order);
+    }
 }

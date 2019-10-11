@@ -14,7 +14,7 @@ public class DeliveryDto {
 
     private DeliveryStatus status;
 
-    public Delivery from() {
+    public Delivery to() {
         return Delivery.builder()
                 .address(this.address)
                 .status(DeliveryStatus.READY)

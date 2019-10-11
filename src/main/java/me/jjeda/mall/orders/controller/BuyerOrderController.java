@@ -25,15 +25,15 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 
 @Controller
 @RequiredArgsConstructor
-@RequestMapping("/api/orders")
-public class OrderController {
+@RequestMapping("/api/orders/buyer")
+public class BuyerOrderController {
 
     private final OrderService orderService;
 
     @PostMapping
     public ResponseEntity createOrder(@RequestBody OrderDto orderDto, @CurrentUser Account account) {
         Order order = orderService.createOrder(orderDto, account);
-        ControllerLinkBuilder selfLinkBuilder = linkTo(OrderController.class).slash(order.getId());
+        ControllerLinkBuilder selfLinkBuilder = linkTo(BuyerOrderController.class).slash(order.getId());
         URI uri = selfLinkBuilder.toUri();
         Resource<Order> orderResource = new Resource<>(order);
         orderResource.add(selfLinkBuilder.withSelfRel());
@@ -46,13 +46,9 @@ public class OrderController {
     public ResponseEntity getOrder(@PathVariable Long orderId, @CurrentUser Account account) {
         Order order = orderService.getOrder(orderId);
 
-        if (!Objects.equals(order.getAccount(), account)) {
-            return new ResponseEntity(HttpStatus.UNAUTHORIZED);
-        }
-
         Resource<Order> orderResource = new Resource<>(order);
-        orderResource.add(linkTo(OrderController.class).slash(order.getId()).withSelfRel());
-        orderResource.add(linkTo(OrderController.class).slash(order.getId()).withRel("cancel-order"));
+        orderResource.add(linkTo(BuyerOrderController.class).slash(order.getId()).withSelfRel());
+        orderResource.add(linkTo(BuyerOrderController.class).slash(order.getId()).withRel("cancel-order"));
 
         return ResponseEntity.ok(orderResource);
     }
@@ -68,7 +64,7 @@ public class OrderController {
         order = orderService.cancelOrder(orderId);
 
         Resource<Order> orderResource = new Resource<>(order);
-        orderResource.add(linkTo(OrderController.class).withRel("create-order"));
+        orderResource.add(linkTo(BuyerOrderController.class).withRel("create-order"));
 
         return ResponseEntity.ok(orderResource);
     }

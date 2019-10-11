@@ -15,7 +15,7 @@ public class OrderItemDto {
 
     private ItemDto itemDto;
 
-    public OrderItem from() {
+    public OrderItem to() {
         return OrderItem.builder()
                 .orderPrice(this.orderPrice)
                 .quantity(this.quantity)

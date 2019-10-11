@@ -24,14 +24,14 @@ public class OrderDto {
 
     private Account account;
 
-    public Order from() {
+    public Order to() {
         List<OrderItem> tempOrderItems = new ArrayList<>();
         for (OrderItemDto orderItemDto : orderItemDtoList) {
-            tempOrderItems.add(orderItemDto.from());
+            tempOrderItems.add(orderItemDto.to());
         }
 
         return Order.builder()
-                .delivery(this.deliveryDto.from())
+                .delivery(this.deliveryDto.to())
                 .orderItems(tempOrderItems)
                 .account(this.account)
                 .status(OrderStatus.ORDER)
