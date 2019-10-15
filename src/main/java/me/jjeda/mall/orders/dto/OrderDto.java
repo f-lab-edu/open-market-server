@@ -1,10 +1,12 @@
 package me.jjeda.mall.orders.dto;
 
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import me.jjeda.mall.accounts.domain.Account;
+import me.jjeda.mall.accounts.dto.AccountDto;
 import me.jjeda.mall.orders.domain.Order;
 import me.jjeda.mall.orders.domain.OrderItem;
 import me.jjeda.mall.orders.domain.OrderStatus;
@@ -13,27 +15,26 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-@Getter @Setter
-@NoArgsConstructor
+@Getter
+@Setter
 @Builder
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor(access = AccessLevel.PROTECTED)
 public class OrderDto {
 
     private DeliveryDto deliveryDto;
 
     private List<OrderItemDto> orderItemDtoList;
 
-    private Account account;
-
-    public Order to() {
+    public Order toEntity() {
         List<OrderItem> tempOrderItems = new ArrayList<>();
         for (OrderItemDto orderItemDto : orderItemDtoList) {
-            tempOrderItems.add(orderItemDto.to());
+            tempOrderItems.add(orderItemDto.toEntity());
         }
 
         return Order.builder()
-                .delivery(this.deliveryDto.to())
+                .delivery(this.deliveryDto.toEntity())
                 .orderItems(tempOrderItems)
-                .account(this.account)
                 .status(OrderStatus.ORDER)
                 .orderAt(LocalDateTime.now())
                 .build();

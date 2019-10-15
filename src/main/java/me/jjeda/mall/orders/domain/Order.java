@@ -1,6 +1,7 @@
 package me.jjeda.mall.orders.domain;
 
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -30,6 +31,7 @@ import java.util.List;
 @Table(name = "orders", indexes = {@Index(columnList = "orderAt")})
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor(access = AccessLevel.PROTECTED)
 public class Order {
 
     @Id

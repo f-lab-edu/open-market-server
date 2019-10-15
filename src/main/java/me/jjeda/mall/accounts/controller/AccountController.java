@@ -37,20 +37,20 @@ public class AccountController {
     }
 
     @GetMapping
-    public ResponseEntity getAccount(@CurrentUser Account account) {
-        return ResponseEntity.ok(account);
+    public ResponseEntity getAccount(@CurrentUser AccountDto accountDto) {
+        return ResponseEntity.ok(accountDto);
     }
 
     @DeleteMapping
-    public ResponseEntity withdrawFromMembership(@CurrentUser Account account) {
-        accountService.changeAccountStatus(account.getId(), AccountStatus.DELETED);
+    public ResponseEntity withdrawFromMembership(@CurrentUser AccountDto accountDto) {
+        accountService.changeAccountStatus(accountDto.getId(), AccountStatus.DELETED);
 
         return ResponseEntity.ok().build();
     }
 
     @PutMapping
-    public ResponseEntity updateAccount(@RequestBody @Valid AccountDto accountDto, @CurrentUser Account account) {
-        Account updateAccount = accountService.updateAccount(account.getId(), accountDto);
+    public ResponseEntity updateAccount(@RequestBody @Valid AccountDto accountDto, @CurrentUser AccountDto currentUser) {
+        Account updateAccount = accountService.updateAccount(accountDto.getId(), currentUser);
 
         return ResponseEntity.ok(updateAccount);
     }

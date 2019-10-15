@@ -2,6 +2,7 @@ package me.jjeda.mall.orders.controller;
 
 import lombok.RequiredArgsConstructor;
 import me.jjeda.mall.accounts.domain.Account;
+import me.jjeda.mall.accounts.dto.AccountDto;
 import me.jjeda.mall.common.CurrentUser;
 import me.jjeda.mall.orders.domain.Order;
 import me.jjeda.mall.orders.dto.OrderDto;
@@ -31,8 +32,8 @@ public class BuyerOrderController {
     private final OrderService orderService;
 
     @PostMapping
-    public ResponseEntity createOrder(@RequestBody OrderDto orderDto, @CurrentUser Account account) {
-        Order order = orderService.createOrder(orderDto, account);
+    public ResponseEntity createOrder(@RequestBody OrderDto orderDto, @CurrentUser AccountDto accountDto) {
+        Order order = orderService.createOrder(orderDto, accountDto);
         ControllerLinkBuilder selfLinkBuilder = linkTo(BuyerOrderController.class).slash(order.getId());
         URI uri = selfLinkBuilder.toUri();
         Resource<Order> orderResource = new Resource<>(order);

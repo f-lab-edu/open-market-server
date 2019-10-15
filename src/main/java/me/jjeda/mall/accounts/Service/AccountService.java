@@ -1,10 +1,12 @@
 package me.jjeda.mall.accounts.Service;
 
+import lombok.RequiredArgsConstructor;
 import me.jjeda.mall.accounts.domain.Account;
 import me.jjeda.mall.accounts.domain.AccountAdapter;
 import me.jjeda.mall.accounts.domain.AccountStatus;
 import me.jjeda.mall.accounts.dto.AccountDto;
 import me.jjeda.mall.accounts.repository.AccountRepository;
+import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.PagedResources;
@@ -18,16 +20,14 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class AccountService implements UserDetailsService {
 
-    private AccountRepository accountRepository;
+    private final AccountRepository accountRepository;
 
-    private PasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder;
 
-    public AccountService(AccountRepository accountRepository, PasswordEncoder passwordEncoder) {
-        this.accountRepository = accountRepository;
-        this.passwordEncoder = passwordEncoder;
-    }
+    private final ModelMapper modelMapper;
 
     public Account saveAccount(AccountDto dto) {
         Account account = dto.toEntity();
@@ -65,7 +65,8 @@ public class AccountService implements UserDetailsService {
         Account account = accountRepository.findByEmail(username)
                 .orElseThrow(() -> new UsernameNotFoundException(username));
 
-        return AccountAdapter.from(account);
+        AccountDto accountDto = modelMapper.map(account, AccountDto.class);
+        return AccountAdapter.from(accountDto);
     }
 
 }

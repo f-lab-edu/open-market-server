@@ -22,7 +22,7 @@ public class ItemService {
 
     @Transactional
     public Item saveItem(ItemDto itemDto) {
-        Item item = itemDto.from();
+        Item item = itemDto.toEntity();
         List<ItemCategory> itemCategories = item.getItemCategories();
 
         for (ItemCategory itemCategory : itemCategories) {

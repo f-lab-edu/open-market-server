@@ -1,6 +1,7 @@
 package me.jjeda.mall.items.domain;
 
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -22,6 +23,7 @@ import java.util.List;
 @Getter @Setter
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor(access = AccessLevel.PROTECTED)
 public class Item {
 
     @Id
@@ -39,7 +41,7 @@ public class Item {
      * 판매자가 상품판매를 등록하면 (Repository 를 통해 DB에 저장하면)
      * CascadeType.ALL 옵션을 통해 회원 판매목록과 아이템카테고리에도 DB call
      */
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "account_id")
     private Account account;
 

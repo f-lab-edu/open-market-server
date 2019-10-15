@@ -1,6 +1,7 @@
 package me.jjeda.mall.items.dto;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import me.jjeda.mall.accounts.domain.Account;
 import me.jjeda.mall.items.domain.Item;
@@ -10,7 +11,10 @@ import java.util.List;
 
 @Getter
 @AllArgsConstructor
+@Builder
 public class ItemDto {
+
+    private Long id;
 
     private String name;
 
@@ -22,8 +26,9 @@ public class ItemDto {
 
     private List<ItemCategory> itemCategories;
 
-    public Item from() {
+    public Item toEntity() {
         return Item.builder()
+                .id(this.id)
                 .name(this.name)
                 .price(this.price)
                 .stockQuantity(this.stockQuantity)
