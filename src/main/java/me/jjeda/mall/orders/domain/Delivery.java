@@ -1,5 +1,6 @@
 package me.jjeda.mall.orders.domain;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -18,7 +19,8 @@ import javax.persistence.Id;
 import javax.persistence.OneToOne;
 
 @Entity
-@Getter @Setter
+@Getter
+@Setter
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
@@ -30,6 +32,7 @@ public class Delivery {
     private Long id;
 
     @OneToOne(mappedBy = "delivery")
+    @JsonBackReference
     private Order order;
 
     @Embedded

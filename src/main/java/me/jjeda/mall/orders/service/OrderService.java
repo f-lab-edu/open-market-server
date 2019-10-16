@@ -27,13 +27,12 @@ public class OrderService {
     private final AccountService accountService;
 
     @Transactional
-    public Order createOrder(OrderDto orderDto, AccountDto accountDto) {
+    public Order createOrder(OrderDto orderDto, Account account) {
         Order order = orderDto.toEntity();
 
-        Account account = accountService.getAccount(accountDto.getId()).orElseThrow(EntityNotFoundException::new);
         // 연관관계 메서드
         order.setAccount(account);
-        account.insertOrder(order);
+        //TODO : [#33]
         order.getDelivery().setOrder(order);
         List<OrderItem> orderItems = order.getOrderItems();
         for (OrderItem orderItem : orderItems) {
@@ -41,6 +40,7 @@ public class OrderService {
         }
 
         /* 주문이 완료되면 아이템의 전체 재고에서 주문수량만큼 빼주어야한다. */
+        //TODO : 벌크호출
         for (OrderItem orderItem : orderItems) {
             Item item = orderItem.getItem();
             itemService.removeStock(item.getId(), orderItem.getQuantity());

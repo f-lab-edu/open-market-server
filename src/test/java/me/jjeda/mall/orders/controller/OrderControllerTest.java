@@ -24,6 +24,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.security.oauth2.common.util.Jackson2JsonParser;
 import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Set;
@@ -46,6 +47,7 @@ public class OrderControllerTest extends BaseControllerTest {
 
     @TestDescription("정상적으로 주문을 완료하는 테스트")
     @Test
+    @Transactional
     public void createOrder() throws Exception {
         //given
         //ItemDto -> OrderItemDto

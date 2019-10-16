@@ -25,11 +25,7 @@ public class ItemService {
         Item item = itemDto.toEntity();
         List<ItemCategory> itemCategories = item.getItemCategories();
 
-        for (ItemCategory itemCategory : itemCategories) {
-            itemCategory.setItem(item);
-            Category category = itemCategory.getCategory();
-            category.getItemCategories().add(itemCategory);
-        }
+        //TODO : [#31]
 
         return itemRepository.save(item);
     }

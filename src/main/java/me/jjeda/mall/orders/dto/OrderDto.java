@@ -28,9 +28,7 @@ public class OrderDto {
 
     public Order toEntity() {
         List<OrderItem> tempOrderItems = new ArrayList<>();
-        for (OrderItemDto orderItemDto : orderItemDtoList) {
-            tempOrderItems.add(orderItemDto.toEntity());
-        }
+        //TODO : [#30]
 
         return Order.builder()
                 .delivery(this.deliveryDto.toEntity())
