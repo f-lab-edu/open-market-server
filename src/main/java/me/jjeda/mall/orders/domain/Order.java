@@ -53,6 +53,7 @@ public class Order {
     private Delivery delivery;
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
+    @JsonManagedReference
     private List<OrderItem> orderItems;
 
     private LocalDateTime orderAt;

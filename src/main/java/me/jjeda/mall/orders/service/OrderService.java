@@ -29,10 +29,11 @@ public class OrderService {
     @Transactional
     public Order createOrder(OrderDto orderDto, Account account) {
         Order order = orderDto.toEntity();
+        Account tempAccount = accountService.getAccount(account.getId()).get();
 
         // 연관관계 메서드
         order.setAccount(account);
-        //TODO : [#33]
+        //TODO : account.insertOrder(order);
         order.getDelivery().setOrder(order);
         List<OrderItem> orderItems = order.getOrderItems();
         for (OrderItem orderItem : orderItems) {

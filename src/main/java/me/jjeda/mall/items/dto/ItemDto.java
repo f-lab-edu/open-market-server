@@ -1,16 +1,20 @@
 package me.jjeda.mall.items.dto;
 
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import me.jjeda.mall.accounts.domain.Account;
 import me.jjeda.mall.items.domain.Item;
 import me.jjeda.mall.items.domain.ItemCategory;
 
 import java.util.List;
 
-@Getter
-@AllArgsConstructor
+@Getter @Setter
+@AllArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Builder
 public class ItemDto {
 
