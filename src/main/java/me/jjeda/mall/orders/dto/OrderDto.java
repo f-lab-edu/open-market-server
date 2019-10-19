@@ -6,7 +6,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import me.jjeda.mall.accounts.dto.AccountDto;
 import me.jjeda.mall.orders.domain.Order;
 import me.jjeda.mall.orders.domain.OrderItem;
 import me.jjeda.mall.orders.domain.OrderStatus;
