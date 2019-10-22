@@ -28,23 +28,19 @@ public class OrderService {
     @Transactional
     public Order createOrder(OrderDto orderDto, Account account) {
         Order order = orderDto.toEntity();
-        Account tempAccount = accountService.getAccount(account.getId()).get();
 
         // 연관관계 메서드
         order.setAccount(account);
         //TODO : account.insertOrder(order);
         order.getDelivery().setOrder(order);
         List<OrderItem> orderItems = order.getOrderItems();
-        for (OrderItem orderItem : orderItems) {
-            orderItem.setOrder(order);
-        }
+        orderItems.forEach((orderItem) -> orderItem.setOrder(order));
 
         /* 주문이 완료되면 아이템의 전체 재고에서 주문수량만큼 빼주어야한다. */
         //TODO : 벌크호출
-        for (OrderItem orderItem : orderItems) {
-            Item item = orderItem.getItem();
-            itemService.removeStock(item.getId(), orderItem.getQuantity());
-        }
+        orderItems.forEach((orderItem) ->
+                itemService.decrementStock(orderItem.getItem().getId(), orderItem.getQuantity())
+        );
 
         return orderRepository.save(order);
     }
@@ -83,10 +79,9 @@ public class OrderService {
 
         /* 주문을 취소하면 주문했던 수량만큼 다시 재고에 추가해주어야한다 */
         List<OrderItem> orderItems = order.getOrderItems();
-        for (OrderItem orderItem : orderItems) {
-            Item item = orderItem.getItem();
-            itemService.addStock(item.getId(), orderItem.getQuantity());
-        }
+        orderItems.forEach((orderItem) ->
+                itemService.incrementStock(orderItem.getItem().getId(), orderItem.getQuantity())
+        );
 
         return order;
     }
