@@ -1,6 +1,6 @@
 package me.jjeda.mall.orders.domain;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -32,7 +32,6 @@ public class Delivery {
     private Long id;
 
     @OneToOne(mappedBy = "delivery")
-    @JsonBackReference
     private Order order;
 
     @Embedded
@@ -41,4 +40,8 @@ public class Delivery {
     @Enumerated(EnumType.STRING)
     private DeliveryStatus status;
 
+    @JsonIgnore
+    public Order getOrder() {
+        return order;
+    }
 }

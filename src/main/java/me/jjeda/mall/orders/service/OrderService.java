@@ -1,9 +1,7 @@
 package me.jjeda.mall.orders.service;
 
 import lombok.RequiredArgsConstructor;
-import me.jjeda.mall.accounts.Service.AccountService;
 import me.jjeda.mall.accounts.domain.Account;
-import me.jjeda.mall.items.domain.Item;
 import me.jjeda.mall.items.service.ItemService;
 import me.jjeda.mall.orders.domain.DeliveryStatus;
 import me.jjeda.mall.orders.domain.Order;
@@ -23,7 +21,6 @@ import java.util.Objects;
 public class OrderService {
     private final OrderRepository orderRepository;
     private final ItemService itemService;
-    private final AccountService accountService;
 
     @Transactional
     public Order createOrder(OrderDto orderDto, Account account) {
