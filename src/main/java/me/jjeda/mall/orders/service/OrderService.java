@@ -3,7 +3,6 @@ package me.jjeda.mall.orders.service;
 import lombok.RequiredArgsConstructor;
 import me.jjeda.mall.accounts.Service.AccountService;
 import me.jjeda.mall.accounts.domain.Account;
-import me.jjeda.mall.accounts.dto.AccountDto;
 import me.jjeda.mall.items.domain.Item;
 import me.jjeda.mall.items.service.ItemService;
 import me.jjeda.mall.orders.domain.DeliveryStatus;
@@ -32,19 +31,16 @@ public class OrderService {
 
         // 연관관계 메서드
         order.setAccount(account);
-        //TODO : [#33]
+        //TODO : account.insertOrder(order);
         order.getDelivery().setOrder(order);
         List<OrderItem> orderItems = order.getOrderItems();
-        for (OrderItem orderItem : orderItems) {
-            orderItem.setOrder(order);
-        }
+        orderItems.forEach((orderItem) -> orderItem.setOrder(order));
 
         /* 주문이 완료되면 아이템의 전체 재고에서 주문수량만큼 빼주어야한다. */
         //TODO : 벌크호출
-        for (OrderItem orderItem : orderItems) {
-            Item item = orderItem.getItem();
-            itemService.removeStock(item.getId(), orderItem.getQuantity());
-        }
+        orderItems.forEach((orderItem) ->
+                itemService.decrementStock(orderItem.getItem().getId(), orderItem.getQuantity())
+        );
 
         return orderRepository.save(order);
     }
@@ -83,10 +79,9 @@ public class OrderService {
 
         /* 주문을 취소하면 주문했던 수량만큼 다시 재고에 추가해주어야한다 */
         List<OrderItem> orderItems = order.getOrderItems();
-        for (OrderItem orderItem : orderItems) {
-            Item item = orderItem.getItem();
-            itemService.addStock(item.getId(), orderItem.getQuantity());
-        }
+        orderItems.forEach((orderItem) ->
+                itemService.incrementStock(orderItem.getItem().getId(), orderItem.getQuantity())
+        );
 
         return order;
     }

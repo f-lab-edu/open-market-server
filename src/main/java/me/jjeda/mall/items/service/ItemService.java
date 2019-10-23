@@ -44,14 +44,14 @@ public class ItemService {
      * 상품을 주문 or 취소 시 stock 감소 or 증가 로직
      */
     @Transactional
-    public void addStock(Long itemId, int quantity) {
+    public void incrementStock(Long itemId, int quantity) {
         Item item = itemRepository.findById(itemId).orElseThrow(EntityNotFoundException::new);
 
         item.setStockQuantity(item.getStockQuantity()+quantity);
     }
 
     @Transactional
-    public void removeStock(Long itemId, int quantity) {
+    public void decrementStock(Long itemId, int quantity) {
         Item item = itemRepository.findById(itemId).orElseThrow(EntityNotFoundException::new);
 
         int restStock = item.getStockQuantity() - quantity;

@@ -9,13 +9,11 @@ import me.jjeda.mall.common.TestDescription;
 import me.jjeda.mall.common.model.Address;
 import me.jjeda.mall.items.domain.Item;
 import me.jjeda.mall.items.dto.ItemDto;
-import me.jjeda.mall.items.repository.CategoryRepository;
-import me.jjeda.mall.items.repository.ItemRepository;
 import me.jjeda.mall.items.service.ItemService;
-import me.jjeda.mall.orders.domain.DeliveryStatus;
 import me.jjeda.mall.orders.dto.DeliveryDto;
 import me.jjeda.mall.orders.dto.OrderDto;
 import me.jjeda.mall.orders.dto.OrderItemDto;
+import me.jjeda.mall.orders.service.OrderService;
 import org.junit.Test;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +30,7 @@ import java.util.Set;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.httpBasic;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 public class OrderControllerTest extends BaseControllerTest {
 
@@ -43,6 +42,9 @@ public class OrderControllerTest extends BaseControllerTest {
 
     @Autowired
     private ModelMapper modelMapper;
+
+    @Autowired
+    private OrderService orderService;
 
 
     @TestDescription("정상적으로 주문을 완료하는 테스트")
@@ -88,13 +90,19 @@ public class OrderControllerTest extends BaseControllerTest {
 
         //주문상품 정보
         OrderItemDto orderItemDto1 = OrderItemDto.builder()
+                .itemDto(modelMapper.map(item1,ItemDto.class))
+                .quantity(2)
+                .orderPrice(itemDto1.getPrice()*2)
                 .build();
         OrderItemDto orderItemDto2 = OrderItemDto.builder()
+                .itemDto(modelMapper.map(item2,ItemDto.class))
+                .quantity(3)
+                .orderPrice(itemDto2.getPrice()*3)
                 .build();
 
-        //판매자 정보
+        //구매자 정보
         AccountDto buyerAccountDto = AccountDto.builder()
-                .accountRole(Set.of(AccountRole.USER, AccountRole.SELLER))
+                .accountRole(Set.of(AccountRole.USER))
                 .address(new Address("a", "b", "c"))
                 .email("buyer@naver.com")
                 .nickname("buyer")
@@ -115,9 +123,8 @@ public class OrderControllerTest extends BaseControllerTest {
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .accept(MediaTypes.HAL_JSON)
                 .content(objectMapper.writeValueAsBytes(orderDto)))
-                .andDo(print());
-
-
+                .andDo(print())
+                .andExpect(status().isCreated());
     }
 
     private String getAccessToken(AccountDto accountDto) throws Exception {
