@@ -34,7 +34,7 @@ public class OrderService {
         orderItems.forEach((orderItem) -> orderItem.setOrder(order));
 
         /* 주문이 완료되면 아이템의 전체 재고에서 주문수량만큼 빼주어야한다. */
-        //TODO : 벌크호출
+        //TODO : 벌크호출 + 결제가 완료되면 결제쪽에서 해주어야함
         orderItems.forEach((orderItem) ->
                 itemService.decrementStock(orderItem.getItem().getId(), orderItem.getQuantity())
         );

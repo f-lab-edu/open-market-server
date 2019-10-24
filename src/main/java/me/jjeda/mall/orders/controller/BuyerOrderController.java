@@ -32,6 +32,9 @@ public class BuyerOrderController {
 
     @PostMapping
     public ResponseEntity createOrder(@RequestBody OrderDto orderDto, @CurrentUser Account account) {
+        if(Objects.isNull(account)) {
+            return new ResponseEntity(HttpStatus.UNAUTHORIZED);
+        }
         Order order = orderService.createOrder(orderDto, account);
         ControllerLinkBuilder selfLinkBuilder = linkTo(BuyerOrderController.class).slash(order.getId());
         URI uri = selfLinkBuilder.toUri();

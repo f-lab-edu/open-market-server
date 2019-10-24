@@ -7,7 +7,9 @@ import me.jjeda.mall.common.TestDescription;
 import me.jjeda.mall.common.model.Address;
 import me.jjeda.mall.items.dto.ItemDto;
 import me.jjeda.mall.items.service.ItemService;
+import me.jjeda.mall.orders.domain.DeliveryStatus;
 import me.jjeda.mall.orders.domain.Order;
+import me.jjeda.mall.orders.domain.OrderStatus;
 import me.jjeda.mall.orders.dto.DeliveryDto;
 import me.jjeda.mall.orders.dto.OrderDto;
 import me.jjeda.mall.orders.dto.OrderItemDto;
@@ -18,12 +20,17 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 @RunWith(MockitoJUnitRunner.class)
 public class OrderServiceTest {
@@ -96,17 +103,103 @@ public class OrderServiceTest {
     public void createOrder() {
 
         //given
-        Order order = orderDto.toEntity();
-        order.setAccount(buyer);
-        given(orderRepository.save(any())).willReturn(order);
+        given(orderRepository.save(any())).willReturn(orderDto.toEntity());
 
         //when
-        Order createOrder = orderService.createOrder(orderDto, buyer);
+        orderService.createOrder(orderDto, buyer);
 
         //then
-        assertThat(createOrder).isNotNull();
-        assertThat(createOrder.getAccount()).isEqualTo(buyer);
-        assertThat(createOrder.getDelivery().getOrder()).isEqualTo(createOrder);
-        assertThat(createOrder.getOrderItems().get(0).getOrder()).isEqualTo(createOrder);
+        verify(orderRepository, times(1)).save(
+                argThat(innerOrder -> innerOrder.getAccount().equals(buyer)
+                        && innerOrder.getDelivery().getOrder().equals(innerOrder)
+                        && innerOrder.getOrderItems().get(0).getOrder().equals(innerOrder)));
     }
+
+    @Test
+    @TestDescription("정상적으로 주문정보 불러오는 테스트")
+    public void getOrder() {
+        //given
+        Order order = orderDto.toEntity();
+        given(orderRepository.findById(1L)).willReturn(Optional.of(order));
+
+        //when
+        Order getOrder = orderService.getOrder(1L);
+
+        assertThat(getOrder.getOrderItems()).isEqualTo(order.getOrderItems());
+        assertThat(getOrder.getDelivery()).isEqualTo(order.getDelivery());
+    }
+
+    @Test(expected = EntityNotFoundException.class)
+    @TestDescription("없는 주문정보를 불러올때 예외처리하는 테스트")
+    public void getOrder_Throw_Entity_Not_Found() {
+        //given
+        Order order = orderDto.toEntity();
+        given(orderRepository.findById(1L)).willReturn(Optional.empty());
+
+        //when
+        orderService.getOrder(1L);
+    }
+
+    @Test
+    @TestDescription("정상적으로 배송상태를 변경하는 테스트")
+    public void changeDeliveryStatus() {
+        //given
+        Order order = orderDto.toEntity();
+        given(orderRepository.findById(1L)).willReturn(Optional.of(order));
+
+        //when
+        orderService.changeDeliveryStatus(1L, DeliveryStatus.DELIVERY);
+
+        //then
+        assertThat(order.getDelivery().getStatus()).isEqualTo(DeliveryStatus.DELIVERY);
+    }
+
+    @Test(expected = EntityNotFoundException.class)
+    @TestDescription("없는 주문정보의 배송상태를 변경할 때 예외가 발생하는 테스트")
+    public void changeDeliveryStatus_Throw_Entity_Not_Found() {
+        //given
+        Order order = orderDto.toEntity();
+        given(orderRepository.findById(1L)).willReturn(Optional.empty());
+
+        //when
+        orderService.changeDeliveryStatus(1L, DeliveryStatus.DELIVERY);
+    }
+
+    @Test
+    @TestDescription("정상적으로 주문을 취소하는 테스트")
+    public void cancelOrder() {
+        //given
+        Order order = orderDto.toEntity();
+        given(orderRepository.findById(1L)).willReturn(Optional.of(order));
+
+        //when
+        orderService.cancelOrder(1L);
+
+        //then
+        assertThat(order.getStatus()).isEqualTo(OrderStatus.CANCEL);
+    }
+
+    @Test(expected = EntityNotFoundException.class)
+    @TestDescription("없는 주문정보의 주문을 취소할 때 예외가 발생하는 테스트")
+    public void cancelOrder_Throw_Entity_Not_Found() {
+        //given
+        Order order = orderDto.toEntity();
+        given(orderRepository.findById(1L)).willReturn(Optional.empty());
+
+        //when
+        orderService.cancelOrder(1L);
+    }
+
+    @Test(expected = IllegalStateException.class)
+    @TestDescription("배송준비 상태일 때 예외가 발생하는 테스트")
+    public void cancelOrder_Throw_Illegal_State() {
+        //given
+        Order order = orderDto.toEntity();
+        order.getDelivery().setStatus(DeliveryStatus.DELIVERY);
+        given(orderRepository.findById(1L)).willReturn(Optional.of(order));
+
+        //when
+        orderService.cancelOrder(1L);
+    }
+
 }
