@@ -2,6 +2,7 @@ package me.jjeda.mall.orders.controller;
 
 import lombok.RequiredArgsConstructor;
 import me.jjeda.mall.accounts.domain.Account;
+import me.jjeda.mall.accounts.dto.AccountDto;
 import me.jjeda.mall.common.CurrentUser;
 import me.jjeda.mall.orders.domain.Order;
 import me.jjeda.mall.orders.dto.OrderDto;
@@ -32,10 +33,10 @@ public class BuyerOrderController {
 
     @PostMapping
     public ResponseEntity createOrder(@RequestBody OrderDto orderDto, @CurrentUser Account account) {
-        if(Objects.isNull(account)) {
+        if (Objects.isNull(account)) {
             return new ResponseEntity(HttpStatus.UNAUTHORIZED);
         }
-        Order order = orderService.createOrder(orderDto, account);
+        Order order = orderService.createOrder(orderDto, AccountDto.from(account));
         ControllerLinkBuilder selfLinkBuilder = linkTo(BuyerOrderController.class).slash(order.getId());
         URI uri = selfLinkBuilder.toUri();
         Resource<Order> orderResource = new Resource<>(order);

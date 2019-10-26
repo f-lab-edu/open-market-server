@@ -1,7 +1,7 @@
 package me.jjeda.mall.orders.service;
 
 import lombok.RequiredArgsConstructor;
-import me.jjeda.mall.accounts.domain.Account;
+import me.jjeda.mall.accounts.dto.AccountDto;
 import me.jjeda.mall.items.service.ItemService;
 import me.jjeda.mall.orders.domain.DeliveryStatus;
 import me.jjeda.mall.orders.domain.Order;
@@ -23,11 +23,11 @@ public class OrderService {
     private final ItemService itemService;
 
     @Transactional
-    public Order createOrder(OrderDto orderDto, Account account) {
+    public Order createOrder(OrderDto orderDto, AccountDto accountDto) {
         Order order = orderDto.toEntity();
 
         // 연관관계 메서드
-        order.setAccount(account);
+        order.setAccount(accountDto.toEntity());
         //TODO : account.insertOrder(order);
         order.getDelivery().setOrder(order);
         List<OrderItem> orderItems = order.getOrderItems();
