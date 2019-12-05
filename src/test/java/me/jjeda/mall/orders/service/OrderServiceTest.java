@@ -1,6 +1,7 @@
 package me.jjeda.mall.orders.service;
 
 import me.jjeda.mall.accounts.domain.Account;
+import me.jjeda.mall.accounts.domain.AccountAndDtoAdapter;
 import me.jjeda.mall.accounts.domain.AccountRole;
 import me.jjeda.mall.accounts.dto.AccountDto;
 import me.jjeda.mall.common.TestDescription;
@@ -47,15 +48,14 @@ public class OrderServiceTest {
     ItemService itemService;
 
 
-    private Account seller = AccountDto.builder()
-            .accountRole(Set.of(AccountRole.USER, AccountRole.SELLER))
+    private Account seller = Account.builder()
+            .accountRole(Set.of(AccountRole.USER))
             .address(new Address("a", "b", "c"))
             .email("seller@naver.com")
             .nickname("seller")
             .phone("01012341234")
             .password("pass")
-            .build()
-            .toEntity();
+            .build();
 
     private AccountDto buyerDto = AccountDto.builder()
             .accountRole(Set.of(AccountRole.USER))
