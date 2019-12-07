@@ -2,7 +2,6 @@ package me.jjeda.mall.orders.controller;
 
 import me.jjeda.mall.accounts.Service.AccountService;
 import me.jjeda.mall.accounts.common.BaseControllerTest;
-import me.jjeda.mall.accounts.domain.Account;
 import me.jjeda.mall.accounts.domain.AccountAndDtoAdapter;
 import me.jjeda.mall.accounts.domain.AccountRole;
 import me.jjeda.mall.accounts.dto.AccountDto;
@@ -69,7 +68,7 @@ public class OrderControllerTest extends BaseControllerTest {
 
         //판매 상품등록
         ItemDto itemDto1 = ItemDto.builder()
-                .account(AccountAndDtoAdapter.DtoToEntity(sellerDto))
+                .account(AccountAndDtoAdapter.dtoToEntity(sellerDto))
                 .name("상품1")
                 .price(10000)
                 .stockQuantity(100)
@@ -77,7 +76,7 @@ public class OrderControllerTest extends BaseControllerTest {
         Item item1 = itemService.saveItem(itemDto1);
 
         ItemDto itemDto2 = ItemDto.builder()
-                .account(AccountAndDtoAdapter.DtoToEntity(sellerDto))
+                .account(AccountAndDtoAdapter.dtoToEntity(sellerDto))
                 .name("상품2")
                 .price(20000)
                 .stockQuantity(200)

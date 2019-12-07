@@ -22,30 +22,25 @@ public class AccountAndDtoAdapter {
                 .build();
     }
 
-    public static Account DtoToEntity(AccountDto accountDto) {
+    public static Account dtoToEntity(AccountDto accountDto) {
 
-        if (Objects.isNull(accountDto.getId())) {
-            return Account.builder()
-                    .nickname(accountDto.getNickname())
-                    .email(accountDto.getEmail())
-                    .password(accountDto.getPassword())
-                    .address(accountDto.getAddress())
-                    .phone(accountDto.getPhone())
-                    .accountRole(accountDto.getAccountRole())
-                    .createdAt(LocalDateTime.now())
-                    .status(AccountStatus.NORMAL)
-                    .build();
-        }
-        return Account.builder()
-                .id(accountDto.getId())
+        Account account = Account.builder()
                 .nickname(accountDto.getNickname())
                 .email(accountDto.getEmail())
                 .password(accountDto.getPassword())
                 .address(accountDto.getAddress())
                 .phone(accountDto.getPhone())
                 .accountRole(accountDto.getAccountRole())
-                .createdAt(accountDto.getCreateAt())
-                .status(accountDto.getStatus())
+                .createdAt(LocalDateTime.now())
+                .status(AccountStatus.NORMAL)
                 .build();
+
+        if (Objects.nonNull(accountDto.getId())) {
+            account.setId(accountDto.getId());
+            account.setCreatedAt(accountDto.getCreateAt());
+            account.setStatus(accountDto.getStatus());
+        }
+
+        return account;
     }
 }

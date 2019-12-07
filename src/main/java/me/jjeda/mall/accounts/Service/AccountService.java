@@ -18,7 +18,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -29,7 +28,7 @@ public class AccountService implements UserDetailsService {
     private final PasswordEncoder passwordEncoder;
 
     public AccountDto saveAccount(AccountDto dto) {
-        Account account = AccountAndDtoAdapter.DtoToEntity(dto);
+        Account account = AccountAndDtoAdapter.dtoToEntity(dto);
         account.setPassword(passwordEncoder.encode(dto.getPassword()));
 
         return AccountAndDtoAdapter.entityToDto(accountRepository.save(account));

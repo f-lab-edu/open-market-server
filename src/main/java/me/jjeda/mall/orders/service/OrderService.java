@@ -28,7 +28,7 @@ public class OrderService {
         Order order = orderDto.toEntity();
 
         // 연관관계 메서드
-        order.setAccount(AccountAndDtoAdapter.DtoToEntity(accountDto));
+        order.setAccount(AccountAndDtoAdapter.dtoToEntity(accountDto));
         //TODO : account.insertOrder(order);
         order.getDelivery().setOrder(order);
         List<OrderItem> orderItems = order.getOrderItems();
