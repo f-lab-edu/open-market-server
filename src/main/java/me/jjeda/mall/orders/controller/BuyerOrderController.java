@@ -71,4 +71,9 @@ public class BuyerOrderController {
 
         return ResponseEntity.ok(orderResource);
     }
+
+    @PostMapping("/{orderId}/payments")
+    public ResponseEntity payForOrder(@PathVariable Long orderId) {
+
+    }
 }

@@ -10,6 +10,7 @@ import me.jjeda.mall.orders.domain.OrderItem;
 import me.jjeda.mall.orders.domain.OrderStatus;
 import me.jjeda.mall.orders.dto.OrderDto;
 import me.jjeda.mall.orders.repository.OrderRepository;
+import me.jjeda.mall.orders.repository.PaymentRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,6 +23,7 @@ import java.util.Objects;
 public class OrderService {
     private final OrderRepository orderRepository;
     private final ItemService itemService;
+    private final PaymentRepository paymentRepository;
 
     @Transactional
     public Order createOrder(OrderDto orderDto, AccountDto accountDto) {

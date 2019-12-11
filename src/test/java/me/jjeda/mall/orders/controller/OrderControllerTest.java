@@ -46,6 +46,26 @@ public class OrderControllerTest extends BaseControllerTest {
     @Autowired
     private OrderService orderService;
 
+    @Test
+    public void testPayment() throws Exception {
+
+        AccountDto buyerAccountDto = AccountDto.builder()
+                .accountRole(Set.of(AccountRole.USER))
+                .address(new Address("a", "b", "c"))
+                .email("buyer@naver.com")
+                .nickname("buyer")
+                .phone("01012341234")
+                .password("pass")
+                .build();
+        AccountDto buyerDto = accountService.saveAccount(buyerAccountDto);
+
+        mockMvc.perform(post("/api/orders/buyer/payment")
+                .header(HttpHeaders.AUTHORIZATION, getAccessToken(buyerAccountDto))
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .accept(MediaTypes.HAL_JSON))
+                .andDo(print());
+    }
+
 
     @TestDescription("정상적으로 주문을 완료하는 테스트")
     @Test

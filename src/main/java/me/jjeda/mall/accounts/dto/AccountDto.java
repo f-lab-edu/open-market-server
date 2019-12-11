@@ -15,10 +15,8 @@ import java.time.LocalDateTime;
 import java.util.Set;
 
 //@JsonIgnoreProperties({"email", "password", "phone", "address", "accountRole"})
-@AllArgsConstructor
 @Getter
 @Builder
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class AccountDto {
 
     private Long id;
