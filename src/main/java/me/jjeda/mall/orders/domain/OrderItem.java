@@ -1,6 +1,9 @@
 package me.jjeda.mall.orders.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -15,7 +18,9 @@ import javax.persistence.ManyToOne;
 
 @Entity
 @Getter @Setter
+@Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor(access = AccessLevel.PROTECTED)
 public class OrderItem {
 
     @Id @GeneratedValue
@@ -33,4 +38,9 @@ public class OrderItem {
     private int orderPrice;
 
     private int quantity;
+
+    @JsonIgnore
+    public Order getOrder() {
+        return order;
+    }
 }

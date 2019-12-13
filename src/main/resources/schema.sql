@@ -30,7 +30,8 @@ create table account_account_role (
     name varchar(255),
     price integer not null,
     stock_quantity integer not null,
-    primary key (item_id)
+    primary key (item_id),
+    foreign key (account_id) references account (account_id)
     );
 
  create table item_category (

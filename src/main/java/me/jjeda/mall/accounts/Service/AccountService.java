@@ -1,7 +1,9 @@
 package me.jjeda.mall.accounts.Service;
 
+import lombok.RequiredArgsConstructor;
 import me.jjeda.mall.accounts.domain.Account;
-import me.jjeda.mall.accounts.domain.AccountAdapter;
+import me.jjeda.mall.accounts.domain.AccountAndDtoAdapter;
+import me.jjeda.mall.accounts.domain.AccountAndUserAdapter;
 import me.jjeda.mall.accounts.domain.AccountStatus;
 import me.jjeda.mall.accounts.dto.AccountDto;
 import me.jjeda.mall.accounts.repository.AccountRepository;
@@ -15,25 +17,21 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Optional;
+import javax.persistence.EntityNotFoundException;
 
 @Service
+@RequiredArgsConstructor
 public class AccountService implements UserDetailsService {
 
-    private AccountRepository accountRepository;
+    private final AccountRepository accountRepository;
 
-    private PasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder;
 
-    public AccountService(AccountRepository accountRepository, PasswordEncoder passwordEncoder) {
-        this.accountRepository = accountRepository;
-        this.passwordEncoder = passwordEncoder;
-    }
-
-    public Account saveAccount(AccountDto dto) {
-        Account account = dto.toEntity();
+    public AccountDto saveAccount(AccountDto dto) {
+        Account account = AccountAndDtoAdapter.dtoToEntity(dto);
         account.setPassword(passwordEncoder.encode(dto.getPassword()));
 
-        return accountRepository.save(account);
+        return AccountAndDtoAdapter.entityToDto(accountRepository.save(account));
     }
 
     public PagedResources findAllAccountWithStatus(AccountStatus status, Pageable pageable, PagedResourcesAssembler<Account> pagedResourcesAssembler) {
@@ -42,8 +40,9 @@ public class AccountService implements UserDetailsService {
 
     }
 
-    public Optional<Account> getAccount(Long id) {
-        return accountRepository.findById(id);
+    public AccountDto getAccount(Long id) {
+        Account account = accountRepository.findById(id).orElseThrow(EntityNotFoundException::new);
+        return AccountAndDtoAdapter.entityToDto(account);
     }
 
     @Transactional
@@ -53,11 +52,11 @@ public class AccountService implements UserDetailsService {
     }
 
     @Transactional
-    public Account updateAccount(Long id, AccountDto accountDto) {
+    public AccountDto updateAccount(Long id, AccountDto accountDto) {
         Account account = accountRepository.findById(id).get();
         account.update(accountDto);
 
-        return account;
+        return AccountAndDtoAdapter.entityToDto(account);
     }
 
     @Override
@@ -65,7 +64,7 @@ public class AccountService implements UserDetailsService {
         Account account = accountRepository.findByEmail(username)
                 .orElseThrow(() -> new UsernameNotFoundException(username));
 
-        return AccountAdapter.from(account);
+        return AccountAndUserAdapter.from(AccountAndDtoAdapter.entityToDto(account));
     }
 
 }

@@ -1,7 +1,6 @@
 package me.jjeda.mall.accounts.controller;
 
 import me.jjeda.mall.accounts.Service.AccountService;
-import me.jjeda.mall.accounts.domain.Account;
 import me.jjeda.mall.accounts.domain.AccountStatus;
 import me.jjeda.mall.accounts.dto.AccountDto;
 import me.jjeda.mall.common.CurrentUser;
@@ -22,7 +21,7 @@ import java.net.URI;
 @RequestMapping("/api/accounts")
 public class AccountController {
 
-    private AccountService accountService;
+    private final AccountService accountService;
 
     public AccountController(AccountService accountService) {
         this.accountService = accountService;
@@ -30,27 +29,27 @@ public class AccountController {
 
     @PostMapping
     public ResponseEntity createAccount(@RequestBody @Valid AccountDto requestAccount) {
-        Account account = accountService.saveAccount(requestAccount);
-        URI uri = ControllerLinkBuilder.linkTo(AccountController.class).slash(account.getId()).toUri();
+        AccountDto accountDto = accountService.saveAccount(requestAccount);
+        URI uri = ControllerLinkBuilder.linkTo(AccountController.class).slash(accountDto.getId()).toUri();
 
-        return ResponseEntity.created(uri).body(account);
+        return ResponseEntity.created(uri).body(accountDto);
     }
 
     @GetMapping
-    public ResponseEntity getAccount(@CurrentUser Account account) {
-        return ResponseEntity.ok(account);
+    public ResponseEntity getAccount(@CurrentUser AccountDto accountDto) {
+        return ResponseEntity.ok(accountService.getAccount(accountDto.getId()));
     }
 
     @DeleteMapping
-    public ResponseEntity withdrawFromMembership(@CurrentUser Account account) {
-        accountService.changeAccountStatus(account.getId(), AccountStatus.DELETED);
+    public ResponseEntity withdrawFromMembership(@CurrentUser AccountDto accountDto) {
+        accountService.changeAccountStatus(accountDto.getId(), AccountStatus.DELETED);
 
         return ResponseEntity.ok().build();
     }
 
     @PutMapping
-    public ResponseEntity updateAccount(@RequestBody @Valid AccountDto accountDto, @CurrentUser Account account) {
-        Account updateAccount = accountService.updateAccount(account.getId(), accountDto);
+    public ResponseEntity updateAccount(@RequestBody @Valid AccountDto accountDto, @CurrentUser AccountDto currentUser) {
+        AccountDto updateAccount = accountService.updateAccount(currentUser.getId(), accountDto);
 
         return ResponseEntity.ok(updateAccount);
     }

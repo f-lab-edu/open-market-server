@@ -22,14 +22,10 @@ public class ItemService {
 
     @Transactional
     public Item saveItem(ItemDto itemDto) {
-        Item item = itemDto.from();
+        Item item = itemDto.toEntity();
         List<ItemCategory> itemCategories = item.getItemCategories();
 
-        for (ItemCategory itemCategory : itemCategories) {
-            itemCategory.setItem(item);
-            Category category = itemCategory.getCategory();
-            category.getItemCategories().add(itemCategory);
-        }
+        //TODO : [#31]
 
         return itemRepository.save(item);
     }
@@ -48,14 +44,14 @@ public class ItemService {
      * 상품을 주문 or 취소 시 stock 감소 or 증가 로직
      */
     @Transactional
-    public void addStock(Long itemId, int quantity) {
+    public void incrementStock(Long itemId, int quantity) {
         Item item = itemRepository.findById(itemId).orElseThrow(EntityNotFoundException::new);
 
         item.setStockQuantity(item.getStockQuantity()+quantity);
     }
 
     @Transactional
-    public void removeStock(Long itemId, int quantity) {
+    public void decrementStock(Long itemId, int quantity) {
         Item item = itemRepository.findById(itemId).orElseThrow(EntityNotFoundException::new);
 
         int restStock = item.getStockQuantity() - quantity;
