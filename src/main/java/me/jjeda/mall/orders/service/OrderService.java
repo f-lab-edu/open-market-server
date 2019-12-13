@@ -1,9 +1,8 @@
 package me.jjeda.mall.orders.service;
 
 import lombok.RequiredArgsConstructor;
-import me.jjeda.mall.accounts.Service.AccountService;
-import me.jjeda.mall.accounts.domain.Account;
-import me.jjeda.mall.items.domain.Item;
+import me.jjeda.mall.accounts.domain.AccountAndDtoAdapter;
+import me.jjeda.mall.accounts.dto.AccountDto;
 import me.jjeda.mall.items.service.ItemService;
 import me.jjeda.mall.orders.domain.DeliveryStatus;
 import me.jjeda.mall.orders.domain.Order;
@@ -23,21 +22,20 @@ import java.util.Objects;
 public class OrderService {
     private final OrderRepository orderRepository;
     private final ItemService itemService;
-    private final AccountService accountService;
 
     @Transactional
-    public Order createOrder(OrderDto orderDto, Account account) {
+    public Order createOrder(OrderDto orderDto, AccountDto accountDto) {
         Order order = orderDto.toEntity();
 
         // 연관관계 메서드
-        order.setAccount(account);
+        order.setAccount(AccountAndDtoAdapter.dtoToEntity(accountDto));
         //TODO : account.insertOrder(order);
         order.getDelivery().setOrder(order);
         List<OrderItem> orderItems = order.getOrderItems();
         orderItems.forEach((orderItem) -> orderItem.setOrder(order));
 
         /* 주문이 완료되면 아이템의 전체 재고에서 주문수량만큼 빼주어야한다. */
-        //TODO : 벌크호출
+        //TODO : 벌크호출 + 결제가 완료되면 결제쪽에서 해주어야함
         orderItems.forEach((orderItem) ->
                 itemService.decrementStock(orderItem.getItem().getId(), orderItem.getQuantity())
         );
