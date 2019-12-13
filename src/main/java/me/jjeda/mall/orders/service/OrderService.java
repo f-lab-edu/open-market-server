@@ -23,7 +23,6 @@ import java.util.Objects;
 public class OrderService {
     private final OrderRepository orderRepository;
     private final ItemService itemService;
-    private final PaymentRepository paymentRepository;
 
     @Transactional
     public Order createOrder(OrderDto orderDto, AccountDto accountDto) {
