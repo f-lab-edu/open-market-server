@@ -5,7 +5,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import me.jjeda.mall.accounts.domain.Account;
 import me.jjeda.mall.accounts.domain.AccountRole;
 import me.jjeda.mall.accounts.domain.AccountStatus;
 import me.jjeda.mall.common.model.Address;
@@ -13,7 +12,6 @@ import me.jjeda.mall.common.model.Address;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
-import java.util.Objects;
 import java.util.Set;
 
 //@JsonIgnoreProperties({"email", "password", "phone", "address", "accountRole"})
@@ -46,44 +44,4 @@ public class AccountDto {
 
     private AccountStatus status;
 
-    public Account toEntity() {
-
-        if (Objects.isNull(this.id)) {
-            return Account.builder()
-                    .nickname(this.nickname)
-                    .email(this.email)
-                    .password(this.password)
-                    .address(this.address)
-                    .phone(this.phone)
-                    .accountRole(this.accountRole)
-                    .createdAt(LocalDateTime.now())
-                    .status(AccountStatus.NORMAL)
-                    .build();
-        }
-        return Account.builder()
-                .id(this.id)
-                .nickname(this.nickname)
-                .email(this.email)
-                .password(this.password)
-                .address(this.address)
-                .phone(this.phone)
-                .accountRole(this.accountRole)
-                .createdAt(this.createAt)
-                .status(this.status)
-                .build();
-    }
-
-    public static AccountDto from(Account account) {
-        return AccountDto.builder()
-                .id(account.getId())
-                .nickname(account.getNickname())
-                .email(account.getEmail())
-                .password(account.getPassword())
-                .phone(account.getPhone())
-                .accountRole(account.getAccountRole())
-                .address(account.getAddress())
-                .createAt(account.getCreatedAt())
-                .status(account.getStatus())
-                .build();
-    }
 }

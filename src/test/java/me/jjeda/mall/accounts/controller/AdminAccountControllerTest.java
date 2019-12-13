@@ -4,6 +4,7 @@ import me.jjeda.mall.accounts.Service.AccountService;
 import me.jjeda.mall.accounts.common.BaseControllerTest;
 import me.jjeda.mall.accounts.domain.Account;
 import me.jjeda.mall.accounts.domain.AccountRole;
+import me.jjeda.mall.accounts.domain.AccountStatus;
 import me.jjeda.mall.common.model.Address;
 import me.jjeda.mall.accounts.dto.AccountDto;
 import me.jjeda.mall.accounts.repository.AccountRepository;
@@ -15,6 +16,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.security.oauth2.common.util.Jackson2JsonParser;
 import org.springframework.test.web.servlet.ResultActions;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.Set;
 import java.util.stream.IntStream;
 
@@ -41,7 +43,7 @@ public class AdminAccountControllerTest extends BaseControllerTest {
         this.accountRepository.deleteAll();
     }
 
-    private Account generateAccount(int index) {
+    private AccountDto generateAccount(int index) {
         AccountDto accountDto = AccountDto.builder()
                 .accountRole(Set.of(AccountRole.USER))
                 .address(new Address("a", "b", "c"))
@@ -79,25 +81,8 @@ public class AdminAccountControllerTest extends BaseControllerTest {
     }
 
     @Test
-    @TestDescription("admin 이 아닌 상태에서 유효한 100명의 유저에서 20명씩 3번째 페이지 조회하기")
-    public void queryAccountWithoutAdmin() throws Exception {
-        // given
-        IntStream.range(0, 100).forEach(this::generateAccount);
-
-        // when & then
-        this.mockMvc.perform(get("/admin/accounts")
-                .param("page","2")
-                .param("size","20")
-                .param("sort","id,DESC")
-                .param("isDeleted","false"))
-                .andDo(print())
-                .andExpect(status().isUnauthorized());
-
-    }
-
-    @Test
     @TestDescription("admin 상태에서 유효한 100명의 유저에서 20명씩 3번째 페이지 조회하기")
-    public void queryAccountWithAdmin() throws Exception {
+    public void getNormalStatusAccount() throws Exception {
         // given
         IntStream.range(0, 100).forEach(this::generateAccount);
 
@@ -107,7 +92,7 @@ public class AdminAccountControllerTest extends BaseControllerTest {
                 .param("page","2")
                 .param("size","20")
                 .param("sort","id,DESC")
-                .param("isDeleted","false"))
+                .param("status","NORMAL"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("page").exists())
@@ -117,12 +102,12 @@ public class AdminAccountControllerTest extends BaseControllerTest {
 
     @Test
     @TestDescription("관리자가 특정 사용자 조회하는 테스트")
-    public void getAccountByAdmin() throws Exception {
+    public void getAccount() throws Exception {
         //given
-        Account account = generateAccount(1);
+        AccountDto accountDto = generateAccount(1);
 
         // when & then
-        this.mockMvc.perform(get("/admin/accounts/{id}",account.getId())
+        this.mockMvc.perform(get("/admin/accounts/{id}",accountDto.getId())
                 .header(HttpHeaders.AUTHORIZATION, getAccessToken()))
                 .andDo(print())
                 .andExpect(status().isOk())
@@ -131,30 +116,29 @@ public class AdminAccountControllerTest extends BaseControllerTest {
                 .andExpect(jsonPath("nickname").exists())
                 .andExpect(jsonPath("phone").exists())
                 .andExpect(jsonPath("address").exists())
-                .andExpect(jsonPath("isDeleted").value("false"));
+                .andExpect(jsonPath("status").exists());
     }
 
     @Test
     @TestDescription("관리자가 존재하지 않는 사용자 조회했을 때 찾지 못하는 테스트")
-    public void getAccountByAdmin_Wrong_Account() throws Exception {
-        //given
-        Account account = generateAccount(1);
-
+    public void getAccount_Wrong_Account() throws Exception {
         // when & then
         this.mockMvc.perform(get("/admin/accounts/{id}",2312313L)
                 .header(HttpHeaders.AUTHORIZATION, getAccessToken()))
                 .andExpect(status().isNotFound());
+
     }
 
     @Test
-    @TestDescription("관리자가 특정 사용자 삭제하는 테스트")
-    public void deleteAccountByAdmin() throws Exception {
+    @TestDescription("관리자가 특정 사용자 차단하는 테스트")
+    public void banAccount() throws Exception {
         //given
-        Account account = generateAccount(1);
+        AccountDto accountDto = generateAccount(1);
 
         // when & then
-        this.mockMvc.perform(delete("/admin/accounts/{id}",account.getId())
-                .header(HttpHeaders.AUTHORIZATION, getAccessToken()))
+        this.mockMvc.perform(delete("/admin/accounts/{id}",accountDto.getId())
+                .header(HttpHeaders.AUTHORIZATION, getAccessToken())
+                .param("status",AccountStatus.BAN.toString()))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("id").exists())
@@ -162,18 +146,52 @@ public class AdminAccountControllerTest extends BaseControllerTest {
                 .andExpect(jsonPath("nickname").exists())
                 .andExpect(jsonPath("phone").exists())
                 .andExpect(jsonPath("address").exists())
-                .andExpect(jsonPath("isDeleted").value("true"));
+                .andExpect(jsonPath("status").value("BAN"));
     }
 
     @Test
-    @TestDescription("관리자가 존재하지 않는 사용자 삭제했을 때 찾지 못하는 테스트")
-    public void deleteAccountByAdmin_Wrong_Account() throws Exception {
+    @TestDescription("차단된 사용자 정상상태로 복구하는 테스트")
+    public void restoreBanAccount() throws Exception {
         //given
-        Account account = generateAccount(1);
+        AccountDto accountDto = generateAccount(1);
+        accountService.changeAccountStatus(accountDto.getId(),AccountStatus.BAN);
+
+        // when & then
+        this.mockMvc.perform(delete("/admin/accounts/{id}",accountDto.getId())
+                .header(HttpHeaders.AUTHORIZATION, getAccessToken())
+                .param("status",AccountStatus.NORMAL.toString()))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("id").exists())
+                .andExpect(jsonPath("email").exists())
+                .andExpect(jsonPath("nickname").exists())
+                .andExpect(jsonPath("phone").exists())
+                .andExpect(jsonPath("address").exists())
+                .andExpect(jsonPath("status").value("NORMAL"));
+    }
+
+    @Test
+    @TestDescription("관리자가 사용자를 회원탈퇴 상태로 변하려고 할때 실패하는 테스트")
+    public void failDeleteAccount() throws Exception {
+        //given
+        AccountDto accountDto = generateAccount(1);
+
+        // when & then
+        this.mockMvc.perform(delete("/admin/accounts/{id}",accountDto.getId())
+                .header(HttpHeaders.AUTHORIZATION, getAccessToken())
+                .param("status",AccountStatus.DELETED.toString()))
+                .andDo(print())
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @TestDescription("관리자가 존재하지 않는 사용자 차단했을 때 찾지 못하는 테스트")
+    public void banAccount_Wrong_Account() throws Exception {
 
         // when & then
         this.mockMvc.perform(delete("/admin/accounts/{id}",2312313L)
-                .header(HttpHeaders.AUTHORIZATION, getAccessToken()))
+                .header(HttpHeaders.AUTHORIZATION, getAccessToken())
+                .param("status",AccountStatus.BAN.toString()))
                 .andExpect(status().isNotFound());
     }
 }
