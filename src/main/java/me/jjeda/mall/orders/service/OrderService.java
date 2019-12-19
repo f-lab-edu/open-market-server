@@ -10,7 +10,6 @@ import me.jjeda.mall.orders.domain.OrderItem;
 import me.jjeda.mall.orders.domain.OrderStatus;
 import me.jjeda.mall.orders.dto.OrderDto;
 import me.jjeda.mall.orders.repository.OrderRepository;
-import me.jjeda.mall.orders.repository.PaymentRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,16 +29,17 @@ public class OrderService {
 
         // 연관관계 메서드
         order.setAccount(AccountAndDtoAdapter.dtoToEntity(accountDto));
-        //TODO : account.insertOrder(order);
+        //TODO : [#33] Account <-> Order 연관관계 메서드 처리
+        // order.getAccount().insertOrder(order);
         order.getDelivery().setOrder(order);
         List<OrderItem> orderItems = order.getOrderItems();
-        orderItems.forEach((orderItem) -> orderItem.setOrder(order));
 
-        /* 주문이 완료되면 아이템의 전체 재고에서 주문수량만큼 빼주어야한다. */
-        //TODO : 벌크호출 + 결제가 완료되면 결제쪽에서 해주어야함
-        orderItems.forEach((orderItem) ->
-                itemService.decrementStock(orderItem.getItem().getId(), orderItem.getQuantity())
-        );
+        int totalPrice = 0;
+        for (OrderItem item : orderItems) {
+            item.setOrder(order);
+            totalPrice += item.getOrderPrice() * item.getQuantity();
+        }
+        order.setTotalPrice(totalPrice);
 
         return orderRepository.save(order);
     }
@@ -47,13 +47,6 @@ public class OrderService {
     public Order getOrder(Long orderId) {
         return orderRepository.findById(orderId).orElseThrow(EntityNotFoundException::new);
     }
-
-    //TODO [#25] : 주문생성 -> 결제 -> 배송 에서 결제단계
-    public Order payForOrder() {
-
-        return null;
-    }
-
 
     @Transactional
     public Order changeDeliveryStatus(Long orderId, DeliveryStatus deliveryStatus) {
@@ -76,6 +69,7 @@ public class OrderService {
         }
         order.setStatus(OrderStatus.CANCEL);
 
+        //TODO : 주문 취소 ->결제 취소 할때로 변경
         /* 주문을 취소하면 주문했던 수량만큼 다시 재고에 추가해주어야한다 */
         List<OrderItem> orderItems = order.getOrderItems();
         orderItems.forEach((orderItem) ->

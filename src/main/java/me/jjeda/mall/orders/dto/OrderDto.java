@@ -27,11 +27,12 @@ public class OrderDto {
 
     public Order toEntity() {
         List<OrderItem> tempOrderItems = new ArrayList<>();
-        orderItemDtoList.forEach((dto)->tempOrderItems.add(dto.toEntity()));
+        orderItemDtoList.forEach((dto) -> tempOrderItems.add(dto.toEntity()));
 
         return Order.builder()
                 .delivery(this.deliveryDto.toEntity())
                 .orderItems(tempOrderItems)
+                .payment(PaymentDto.toReadyEntity())
                 .status(OrderStatus.ORDER)
                 .orderAt(LocalDateTime.now())
                 .build();

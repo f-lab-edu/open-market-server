@@ -1,6 +1,7 @@
 package me.jjeda.mall.orders.service;
 
 import lombok.RequiredArgsConstructor;
+import me.jjeda.mall.orders.domain.Payment;
 import me.jjeda.mall.orders.dto.PaymentDto;
 import me.jjeda.mall.orders.repository.MobilePaymentRepository;
 import me.jjeda.mall.orders.repository.PaymentRepository;
@@ -12,7 +13,7 @@ public class MobilePaymentService implements PaymentService {
     private final MobilePaymentRepository mobilePaymentRepository;
 
     @Override
-    public PaymentDto payForOrder(PaymentDto paymentDto, Long orderId) {
+    public Payment payForOrder(PaymentDto paymentDto, Long orderId) {
         return null;
     }
 }

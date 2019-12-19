@@ -13,6 +13,7 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -34,6 +35,8 @@ public class Payment {
 
     @Enumerated(EnumType.STRING)
     private PaymentType paymentType;
+
+    private LocalDateTime createdAt;
 
 
 }
