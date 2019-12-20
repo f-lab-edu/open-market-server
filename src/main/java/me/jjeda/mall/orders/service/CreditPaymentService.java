@@ -13,7 +13,7 @@ public class CreditPaymentService implements PaymentService {
     private final CreditPaymentRepository creditPaymentRepository;
 
     @Override
-    public Payment payForOrder(PaymentDto paymentDto, Long orderId) {
+    public PaymentDto payForOrder(PaymentDto paymentDto, Long orderId) {
         return null;
     }
 

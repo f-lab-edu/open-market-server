@@ -56,6 +56,7 @@ public class Order {
     private int totalPrice;
 
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "payment_id")
     private Payment payment;
 
     private LocalDateTime orderAt;
