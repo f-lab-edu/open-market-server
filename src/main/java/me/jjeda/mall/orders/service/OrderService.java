@@ -4,16 +4,22 @@ import lombok.RequiredArgsConstructor;
 import me.jjeda.mall.accounts.domain.AccountAndDtoAdapter;
 import me.jjeda.mall.accounts.dto.AccountDto;
 import me.jjeda.mall.items.service.ItemService;
+import me.jjeda.mall.orders.domain.CashPayment;
 import me.jjeda.mall.orders.domain.DeliveryStatus;
 import me.jjeda.mall.orders.domain.Order;
 import me.jjeda.mall.orders.domain.OrderItem;
 import me.jjeda.mall.orders.domain.OrderStatus;
+import me.jjeda.mall.orders.domain.Payment;
+import me.jjeda.mall.orders.domain.PaymentStatus;
+import me.jjeda.mall.orders.dto.CashPaymentDto;
 import me.jjeda.mall.orders.dto.OrderDto;
+import me.jjeda.mall.orders.dto.PaymentDto;
 import me.jjeda.mall.orders.repository.OrderRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 
@@ -58,7 +64,6 @@ public class OrderService {
         return order;
     }
 
-
     @Transactional
     public Order cancelOrder(Long orderId) {
         Order order = orderRepository.findById(orderId).orElseThrow(EntityNotFoundException::new);
@@ -77,5 +82,27 @@ public class OrderService {
         );
 
         return order;
+    }
+
+    @Transactional
+    public PaymentDto completePayment(PaymentService paymentService, PaymentDto paymentDto, Long orderId) {
+        Order order = getOrder(orderId);
+        Payment payment = order.getPayment();
+        List<OrderItem> orderItems = order.getOrderItems();
+
+        payment = Payment.builder()
+                .paymentStatus(PaymentStatus.COMP)
+                .id(payment.getId())
+                .price(order.getTotalPrice())
+                .createdAt(LocalDateTime.now())
+                .paymentType(paymentDto.getPaymentType())
+                .build();
+
+        /* 주문이 완료되면 아이템의 전체 재고에서 주문수량만큼 빼주어야한다. */
+        //TODO : N+1문제 -> 벌크호출
+        orderItems.forEach((orderItem) ->
+                itemService.decrementStock(orderItem.getItem().getId(), orderItem.getQuantity())
+        );
+        return paymentService.savePaymentInfo(paymentDto, payment);
     }
 }

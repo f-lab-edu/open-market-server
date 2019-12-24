@@ -9,6 +9,7 @@ import lombok.Setter;
 import me.jjeda.mall.orders.domain.Order;
 import me.jjeda.mall.orders.domain.OrderItem;
 import me.jjeda.mall.orders.domain.OrderStatus;
+import me.jjeda.mall.orders.domain.Payment;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -32,7 +33,7 @@ public class OrderDto {
         return Order.builder()
                 .delivery(this.deliveryDto.toEntity())
                 .orderItems(tempOrderItems)
-                .payment(PaymentDto.toReadyEntity())
+                .payment(Payment.toReadyEntity())
                 .status(OrderStatus.ORDER)
                 .orderAt(LocalDateTime.now())
                 .build();

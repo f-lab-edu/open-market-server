@@ -4,9 +4,10 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import me.jjeda.mall.orders.domain.Payment;
 import me.jjeda.mall.orders.domain.PaymentStatus;
 import me.jjeda.mall.orders.domain.PaymentType;
+
+import java.time.LocalDateTime;
 
 @Builder
 @Getter
@@ -21,12 +22,5 @@ public class PaymentDto {
 
     private PaymentType paymentType;
 
-    public static Payment toReadyEntity() {
-        return Payment.builder()
-                .paymentStatus(PaymentStatus.READY)
-                .build();
-    }
-    public Payment toPaymentEntity() {
-        return null;
-    }
+    private LocalDateTime createdAt;
 }

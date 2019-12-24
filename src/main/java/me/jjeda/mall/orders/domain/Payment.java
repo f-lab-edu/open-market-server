@@ -38,5 +38,13 @@ public class Payment {
 
     private LocalDateTime createdAt;
 
+    /**
+     * 주문이 완료되면 결제대기상태의 결제 Entity 를 만들기 위한 메서드
+     */
+    public static Payment toReadyEntity() {
+        return Payment.builder()
+                .paymentStatus(PaymentStatus.READY)
+                .build();
+    }
 
 }

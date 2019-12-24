@@ -1,20 +1,30 @@
 package me.jjeda.mall.orders.service;
 
 import lombok.RequiredArgsConstructor;
+import me.jjeda.mall.orders.domain.CreditPayment;
 import me.jjeda.mall.orders.domain.Payment;
+import me.jjeda.mall.orders.domain.PaymentAdapter;
+import me.jjeda.mall.orders.dto.CreditPaymentDto;
 import me.jjeda.mall.orders.dto.PaymentDto;
 import me.jjeda.mall.orders.repository.CreditPaymentRepository;
-import me.jjeda.mall.orders.repository.PaymentRepository;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @RequiredArgsConstructor
+@Service
 public class CreditPaymentService implements PaymentService {
 
-    private final PaymentRepository paymentRepository;
     private final CreditPaymentRepository creditPaymentRepository;
 
     @Override
-    public PaymentDto payForOrder(PaymentDto paymentDto, Long orderId) {
-        return null;
+    @Transactional
+    public PaymentDto savePaymentInfo(PaymentDto paymentDto, Payment payment) {
+        CreditPaymentDto creditPaymentDto = (CreditPaymentDto) paymentDto;
+        CreditPayment creditPayment = PaymentAdapter.toEntity(creditPaymentDto);
+        creditPayment.setPayment(payment);
+        creditPaymentRepository.save(creditPayment);
+
+        return PaymentAdapter.toDto(creditPayment);
     }
 
 }
