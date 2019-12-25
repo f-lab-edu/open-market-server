@@ -1,17 +1,18 @@
 package me.jjeda.mall.orders.dto;
 
-import lombok.AccessLevel;
-import lombok.Builder;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.experimental.SuperBuilder;
 import me.jjeda.mall.orders.domain.PaymentStatus;
 import me.jjeda.mall.orders.domain.PaymentType;
 
 import java.time.LocalDateTime;
 
-@Builder
+@SuperBuilder
 @Getter
-@NoArgsConstructor(access = AccessLevel.PACKAGE)
+@Setter
+@AllArgsConstructor
 public class PaymentDto {
 
     private Long id;
@@ -23,4 +24,6 @@ public class PaymentDto {
     private PaymentType paymentType;
 
     private LocalDateTime createdAt;
+
+    private PaymentDto superTypePaymentDto;
 }

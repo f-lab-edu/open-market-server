@@ -1,10 +1,10 @@
 package me.jjeda.mall.orders.dto;
 
-import lombok.Builder;
 import lombok.Getter;
+import lombok.experimental.SuperBuilder;
 
 @Getter
-@Builder
+@SuperBuilder
 public class CashPaymentDto extends PaymentDto {
 
     private Long cashPaymentId;
@@ -14,6 +14,4 @@ public class CashPaymentDto extends PaymentDto {
     private String bankAccount;
 
     private String name;
-
-    private PaymentDto paymentDto;
 }

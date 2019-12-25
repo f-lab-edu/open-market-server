@@ -2,7 +2,6 @@ package me.jjeda.mall.orders.service;
 
 import lombok.RequiredArgsConstructor;
 import me.jjeda.mall.orders.domain.MobilePayment;
-import me.jjeda.mall.orders.domain.Payment;
 import me.jjeda.mall.orders.domain.PaymentAdapter;
 import me.jjeda.mall.orders.dto.MobilePaymentDto;
 import me.jjeda.mall.orders.dto.PaymentDto;
@@ -18,10 +17,9 @@ public class MobilePaymentService implements PaymentService {
 
     @Override
     @Transactional
-    public PaymentDto savePaymentInfo(PaymentDto paymentDto, Payment payment) {
+    public PaymentDto savePaymentInfo(PaymentDto paymentDto) {
         MobilePaymentDto mobilePaymentDto = (MobilePaymentDto) paymentDto;
         MobilePayment mobilePayment = PaymentAdapter.toEntity(mobilePaymentDto);
-        mobilePayment.setPayment(payment);
         mobilePaymentRepository.save(mobilePayment);
 
         return PaymentAdapter.toDto(mobilePayment);

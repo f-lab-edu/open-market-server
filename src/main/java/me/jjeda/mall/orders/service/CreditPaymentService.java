@@ -2,7 +2,6 @@ package me.jjeda.mall.orders.service;
 
 import lombok.RequiredArgsConstructor;
 import me.jjeda.mall.orders.domain.CreditPayment;
-import me.jjeda.mall.orders.domain.Payment;
 import me.jjeda.mall.orders.domain.PaymentAdapter;
 import me.jjeda.mall.orders.dto.CreditPaymentDto;
 import me.jjeda.mall.orders.dto.PaymentDto;
@@ -18,10 +17,9 @@ public class CreditPaymentService implements PaymentService {
 
     @Override
     @Transactional
-    public PaymentDto savePaymentInfo(PaymentDto paymentDto, Payment payment) {
+    public PaymentDto savePaymentInfo(PaymentDto paymentDto) {
         CreditPaymentDto creditPaymentDto = (CreditPaymentDto) paymentDto;
         CreditPayment creditPayment = PaymentAdapter.toEntity(creditPaymentDto);
-        creditPayment.setPayment(payment);
         creditPaymentRepository.save(creditPayment);
 
         return PaymentAdapter.toDto(creditPayment);
