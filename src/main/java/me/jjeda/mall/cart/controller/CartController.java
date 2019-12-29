@@ -22,26 +22,27 @@ public class CartController {
 
     @PostMapping
     public ResponseEntity initCart(@CurrentUser AccountDto accountDto) {
-        return ResponseEntity.ok(cartService.initCart(accountDto.getId()));
+        return ResponseEntity.ok(cartService.initCart(String.valueOf(accountDto.getEmail())));
     }
 
     @GetMapping
     public ResponseEntity getCart(@CurrentUser AccountDto accountDto) {
-        return ResponseEntity.ok(cartService.getCart(accountDto.getId()));
+        return ResponseEntity.ok(cartService.getCart(String.valueOf(accountDto.getEmail())));
     }
 
     @PutMapping("/add")
     public ResponseEntity addItem(@CurrentUser AccountDto accountDto, @RequestBody CartItem cartItem) {
-        return ResponseEntity.ok(cartService.addItem(accountDto.getId(), cartItem));
+        return ResponseEntity.ok(cartService.addItem(String.valueOf(accountDto.getEmail()), cartItem));
     }
 
     @PutMapping("/remove")
     public ResponseEntity removeItem(@CurrentUser AccountDto accountDto, @RequestBody CartItem cartItem) {
-        return ResponseEntity.ok(cartService.removeItem(accountDto.getId(), cartItem));
+        return ResponseEntity.ok(cartService.removeItem(String.valueOf(accountDto.getEmail()), cartItem));
     }
 
     @DeleteMapping
     public ResponseEntity deleteCart(@CurrentUser AccountDto accountDto) {
-        return ResponseEntity.ok(cartService.deleteCart(accountDto.getId()));
+        cartService.deleteCart(String.valueOf(accountDto.getId()));
+        return ResponseEntity.ok().build();
     }
 }
