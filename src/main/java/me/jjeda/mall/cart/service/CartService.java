@@ -15,7 +15,6 @@ import java.util.List;
 public class CartService {
     private final CartRedisRepository cartRedisRepository;
 
-    @Transactional(readOnly = true)
     public Cart getCart(String id) {
         return cartRedisRepository.findById(id).orElseThrow(EntityNotFoundException::new);
     }
@@ -37,7 +36,7 @@ public class CartService {
 
     @Transactional
     public Cart removeItem(String id, CartItem cartItem) {
-        final Cart cart = getCart(id);
+        Cart cart = getCart(id);
         List<CartItem> cartItemList = cart.getCartItemList();
         cartItemList.remove(cartItem);
 
