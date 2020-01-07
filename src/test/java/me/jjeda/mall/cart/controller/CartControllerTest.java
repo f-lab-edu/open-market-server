@@ -146,7 +146,7 @@ public class CartControllerTest extends BaseControllerTest {
         cartRedisRepository.save(cart);
 
         //when & then
-        mockMvc.perform(put("/api/carts/add")
+        mockMvc.perform(put("/api/carts/items/new")
                 .header(HttpHeaders.AUTHORIZATION, getAccessToken())
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .content(objectMapper.writeValueAsString(cartItem2)))
