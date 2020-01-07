@@ -1,7 +1,6 @@
 package me.jjeda.mall.orders.service;
 
 import me.jjeda.mall.accounts.domain.Account;
-import me.jjeda.mall.accounts.domain.AccountAndDtoAdapter;
 import me.jjeda.mall.accounts.domain.AccountRole;
 import me.jjeda.mall.accounts.dto.AccountDto;
 import me.jjeda.mall.common.TestDescription;
@@ -13,7 +12,11 @@ import me.jjeda.mall.orders.domain.DeliveryStatus;
 import me.jjeda.mall.orders.domain.Order;
 import me.jjeda.mall.orders.domain.OrderItem;
 import me.jjeda.mall.orders.domain.OrderStatus;
+import me.jjeda.mall.orders.domain.Payment;
+import me.jjeda.mall.orders.domain.PaymentStatus;
+import me.jjeda.mall.orders.domain.PaymentType;
 import me.jjeda.mall.orders.dto.OrderDto;
+import me.jjeda.mall.orders.dto.PaymentDto;
 import me.jjeda.mall.orders.repository.OrderRepository;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -46,6 +49,9 @@ public class OrderServiceTest {
 
     @Mock
     ItemService itemService;
+
+    @Mock
+    PaymentService paymentService;
 
 
     private Account seller = Account.builder()
@@ -100,12 +106,18 @@ public class OrderServiceTest {
             .orderPrice(item2.getPrice() * 3)
             .build();
 
+    private Payment payment = Payment.builder()
+            .id(1L)
+            .paymentStatus(PaymentStatus.READY)
+            .build();
+
     private Order order = Order.builder()
             .id(1L)
             .orderAt(LocalDateTime.now())
             .status(OrderStatus.ORDER)
             .orderItems(List.of(orderItem1, orderItem2))
             .delivery(delivery)
+            .payment(payment)
             .build();
 
     @Test
@@ -123,6 +135,7 @@ public class OrderServiceTest {
         assertThat(order.getDelivery().getOrder()).isEqualTo(order);
         assertThat(order.getAccount().getEmail()).isEqualTo(buyerDto.getEmail());
         assertThat(order.getOrderItems().get(0).getOrder()).isEqualTo(order);
+        assertThat(order.getPayment().getPaymentStatus()).isEqualTo(PaymentStatus.READY);
     }
 
     @Test
@@ -196,7 +209,7 @@ public class OrderServiceTest {
     }
 
     @Test(expected = IllegalStateException.class)
-    @TestDescription("배송준비 상태일 때 예외가 발생하는 테스트")
+    @TestDescription("배송준비 상태일 때 주문을 취소하면 예외가 발생하는 테스트")
     public void cancelOrder_Throw_Illegal_State() {
         //given
         order.getDelivery().setStatus(DeliveryStatus.DELIVERY);
@@ -204,6 +217,27 @@ public class OrderServiceTest {
 
         //when
         orderService.cancelOrder(1L);
+    }
+
+    @Test
+    @TestDescription("결제를 완료 했을 때 결제정보가 저장되는 테스트")
+    public void completePayment() {
+
+        //given
+        PaymentDto paymentDto = PaymentDto.builder()
+                .price(10000)
+                .paymentType(PaymentType.CASH)
+                .build();
+        given(orderRepository.findById(1L)).willReturn(Optional.of(order));
+
+
+        //when
+        orderService.completePayment(paymentService, paymentDto, 1L);
+
+        //then
+        assertThat(order.getPayment().getPaymentStatus()).isEqualTo(PaymentStatus.COMP);
+        assertThat(order.getPayment().getPrice()).isEqualTo(10000);
+        assertThat(order.getPayment().getPaymentType()).isEqualTo(PaymentType.CASH);
     }
 
 }

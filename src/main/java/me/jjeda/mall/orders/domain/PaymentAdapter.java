@@ -6,6 +6,15 @@ import me.jjeda.mall.orders.dto.MobilePaymentDto;
 import me.jjeda.mall.orders.dto.PaymentDto;
 
 public class PaymentAdapter {
+    public static Payment toEntity(PaymentDto paymentDto) {
+        return Payment.builder()
+                .id(paymentDto.getId())
+                .price(paymentDto.getPrice())
+                .createdAt(paymentDto.getCreatedAt())
+                .paymentType(paymentDto.getPaymentType())
+                .paymentStatus(paymentDto.getPaymentStatus())
+                .build();
+    }
 
     public static CashPayment toEntity(CashPaymentDto cashPaymentDto) {
         return CashPayment.builder()
@@ -13,6 +22,7 @@ public class PaymentAdapter {
                 .bank(cashPaymentDto.getBank())
                 .bankAccount(cashPaymentDto.getBankAccount())
                 .name(cashPaymentDto.getName())
+                .payment(toEntity(cashPaymentDto.getSuperTypePaymentDto()))
                 .build();
     }
 
@@ -22,6 +32,7 @@ public class PaymentAdapter {
                 .bank(creditPaymentDto.getBank())
                 .cardNumber(creditPaymentDto.getCardNumber())
                 .name(creditPaymentDto.getName())
+                .payment(toEntity(creditPaymentDto.getSuperTypePaymentDto()))
                 .build();
     }
 
@@ -31,6 +42,7 @@ public class PaymentAdapter {
                 .phone(mobilePaymentDto.getPhone())
                 .telco(mobilePaymentDto.getTelco())
                 .name(mobilePaymentDto.getName())
+                .payment(toEntity(mobilePaymentDto.getSuperTypePaymentDto()))
                 .build();
     }
 
@@ -50,7 +62,6 @@ public class PaymentAdapter {
                 .bank(cashPayment.getBank())
                 .bankAccount(cashPayment.getBankAccount())
                 .name(cashPayment.getName())
-                .paymentDto(toDto(cashPayment.getPayment()))
                 .build();
     }
 
@@ -60,7 +71,6 @@ public class PaymentAdapter {
                 .bank(creditPayment.getBank())
                 .cardNumber(creditPayment.getCardNumber())
                 .name(creditPayment.getName())
-                .paymentDto(toDto(creditPayment.getPayment()))
                 .build();
     }
 
@@ -70,7 +80,6 @@ public class PaymentAdapter {
                 .phone(mobilePayment.getPhone())
                 .telco(mobilePayment.getTelco())
                 .name(mobilePayment.getName())
-                .paymentDto(toDto(mobilePayment.getPayment()))
                 .build();
     }
 }
