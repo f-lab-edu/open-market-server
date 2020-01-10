@@ -23,7 +23,7 @@ import java.util.List;
 @Entity
 @Getter @Setter
 @Builder
-@EqualsAndHashCode
+@EqualsAndHashCode(exclude = "name")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 public class Item {

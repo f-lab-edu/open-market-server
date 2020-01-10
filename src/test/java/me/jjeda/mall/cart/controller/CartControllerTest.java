@@ -165,12 +165,12 @@ public class CartControllerTest extends BaseControllerTest {
         //given
         Cart cart = Cart.builder()
                 .id("jjeda@naver.com")
-                .cartItemList(List.of(cartItem1, cartItem2))
+                .cartItemList(List.of(cartItem1,cartItem2))
                 .build();
         cartRedisRepository.save(cart);
 
         //when & then
-        mockMvc.perform(put("/api/carts/remove")
+        mockMvc.perform(put("/api/carts/items")
                 .header(HttpHeaders.AUTHORIZATION, getAccessToken())
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .content(objectMapper.writeValueAsString(cartItem2)))
