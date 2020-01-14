@@ -7,6 +7,9 @@ import me.jjeda.mall.items.domain.Item;
 import me.jjeda.mall.items.domain.ItemCategory;
 import me.jjeda.mall.items.dto.ItemDto;
 import me.jjeda.mall.items.repository.ItemRepository;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,6 +19,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@EnableCaching
 public class ItemService {
 
     private final ItemRepository itemRepository;
@@ -31,9 +35,13 @@ public class ItemService {
     }
 
     @Transactional(readOnly = true)
+    @Cacheable(value = "findItemCache",key ="#itemId")
     public Optional<Item> getItem(Long itemId) {
         return itemRepository.findById(itemId);
     }
+
+    @CacheEvict(value = "findItemCache",key ="#itemId")
+    public void refreshCache(Long itemId) { }
 
     @Transactional(readOnly = true)
     public List<Item> salesList(Long accountId) {
